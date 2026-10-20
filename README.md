@@ -42,6 +42,6 @@ Inclua um item no `photos.json`:
 
 - [ ] Trocar placeholders por fotos reais (Cloudinary, como no rtrgb.github.io)
 - [x] Número do WhatsApp
-- [ ] Conferir o @ do Instagram
+- [x] @ do Instagram (by.coast_)
 - [ ] Publicar no GitHub Pages
 - [ ] Painel para o dono subir fotos sem mexer no código
