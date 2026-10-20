@@ -1,0 +1,563 @@
+/* ========================
+   VARIÁVEIS (cores e fontes)
+   Mude aqui e o site inteiro acompanha
+======================== */
+:root {
+    --bg: #0c0d0d;
+    --text: #e8e8e5;
+    --muted: #8b8e8c;
+    --faint: #4a4d4c;
+    --line: #1e2120;
+    --accent: #9fc3c4;
+    /* azul-água claro, usado só em foco e hover */
+
+    --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace;
+
+    /* margem lateral que respeita o notch do celular */
+    --side-l: max(24px, env(safe-area-inset-left, 0px));
+    --side-r: max(24px, env(safe-area-inset-right, 0px));
+
+    color-scheme: dark;
+}
+
+/* ========================
+   RESET E BASE
+======================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    * {
+        transition: none !important;
+    }
+}
+
+/* ========================
+   NAVEGAÇÃO
+======================== */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: 20px;
+    padding-left: var(--side-l);
+    padding-right: var(--side-r);
+    transition: background-color 0.3s, border-color 0.3s;
+    border-bottom: 1px solid transparent;
+}
+
+nav.scrolled {
+    background-color: var(--bg);
+    border-bottom-color: var(--line);
+}
+
+.nav-logo {
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--text);
+}
+
+/* ========================
+   HERO
+======================== */
+.hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 160px;
+    padding-bottom: 72px;
+    padding-left: var(--side-l);
+    padding-right: var(--side-r);
+}
+
+.hero h1 {
+    font-size: clamp(3.5rem, 14vw, 10rem);
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+}
+
+.hero-sub {
+    margin-top: 28px;
+    max-width: 30ch;
+    font-size: 1.15rem;
+    color: var(--muted);
+}
+
+.hero-meta {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+}
+
+/* ========================
+   SEÇÕES GERAIS
+======================== */
+section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 72px;
+    padding-bottom: 72px;
+    padding-left: var(--side-l);
+    padding-right: var(--side-r);
+}
+
+section h2 {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 40px;
+}
+
+.section-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px 32px;
+    margin-bottom: 32px;
+}
+
+.section-head h2 {
+    margin-bottom: 0;
+}
+
+/* ========================
+   FILTROS
+======================== */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    color: var(--faint);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.filter-btn:hover {
+    color: var(--muted);
+}
+
+.filter-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+/* ========================
+   GALERIA (colunas estilo masonry)
+======================== */
+.grid {
+    columns: 3;
+    column-gap: 12px;
+}
+
+.photo-item {
+    position: relative;
+    break-inside: avoid;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.photo-item.hidden {
+    display: none;
+}
+
+.photo-item img {
+    width: 100%;
+    display: block;
+    transition: opacity 0.3s;
+}
+
+.photo-item:hover img {
+    opacity: 0.75;
+}
+
+/* selo de vídeo no canto da miniatura */
+.photo-item .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 3px 7px;
+}
+
+/* ========================
+   SERVIÇOS
+======================== */
+.services {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+}
+
+.service {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+}
+
+.service h3 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+}
+
+.service p {
+    color: var(--muted);
+    max-width: 32ch;
+}
+
+.note {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: var(--faint);
+}
+
+/* ========================
+   ORÇAMENTO (formulário)
+======================== */
+.lead {
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    max-width: 28ch;
+    margin-bottom: 40px;
+}
+
+#form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 32px;
+    max-width: 760px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--faint);
+    border-radius: 0;
+    padding: 8px 0;
+}
+
+select option {
+    background: var(--bg);
+    color: var(--text);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--faint);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+}
+
+textarea {
+    resize: vertical;
+}
+
+.form-error {
+    color: var(--accent);
+    font-size: 0.9rem;
+    min-height: 1em;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+}
+
+.btn {
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--bg);
+    background: var(--text);
+    border: none;
+    padding: 14px 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background: var(--accent);
+}
+
+.privacy {
+    font-size: 0.8rem;
+    color: var(--faint);
+}
+
+/* ========================
+   LIGHTBOX (foto ampliada)
+======================== */
+#lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.96);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+#lightbox.active {
+    display: flex;
+}
+
+#lightbox-close {
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    right: var(--side-r);
+    font-size: 2rem;
+    line-height: 1;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.lightbox-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.6rem;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.4;
+    padding: 16px;
+    transition: opacity 0.2s;
+}
+
+.lightbox-nav:hover {
+    opacity: 1;
+}
+
+#lightbox-prev {
+    left: max(8px, env(safe-area-inset-left, 0px));
+}
+
+#lightbox-next {
+    right: max(8px, env(safe-area-inset-right, 0px));
+}
+
+.lightbox-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+#lightbox-media img,
+#lightbox-media video {
+    max-width: 80vw;
+    max-height: 75vh;
+    object-fit: contain;
+    display: block;
+}
+
+.lightbox-info {
+    display: flex;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ========================
+   FOOTER
+======================== */
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    padding-left: var(--side-l);
+    padding-right: var(--side-r);
+    border-top: 1px solid var(--line);
+    color: var(--faint);
+    font-size: 0.8rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--text);
+}
+
+/* ========================
+   TABLET (até 768px)
+======================== */
+@media (max-width: 768px) {
+    .grid {
+        columns: 2;
+    }
+
+    .services {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .nav-links {
+        gap: 20px;
+    }
+}
+
+/* ========================
+   MOBILE (até 480px)
+======================== */
+@media (max-width: 480px) {
+    :root {
+        --side-l: max(16px, env(safe-area-inset-left, 0px));
+        --side-r: max(16px, env(safe-area-inset-right, 0px));
+    }
+
+    .hero {
+        padding-top: 120px;
+    }
+
+    .nav-links {
+        gap: 16px;
+    }
+
+    .nav-links a {
+        font-size: 0.8rem;
+    }
+
+    .grid {
+        columns: 1;
+    }
+
+    #form {
+        grid-template-columns: 1fr;
+    }
+
+    #lightbox-media img,
+    #lightbox-media video {
+        max-width: 95vw;
+        max-height: 70vh;
+    }
+
+    .lightbox-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>bycoast</title>
+    <meta name="description" content="Captação de foto e vídeo, edição e postagem. Balneário Camboriú, Itajaí e Itapema." />
+    <meta property="og:title" content="bycoast" />
+    <meta property="og:description" content="Captação de foto e vídeo, edição e postagem. Balneário Camboriú, Itajaí e Itapema." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <!-- NAVEGAÇÃO -->
+    <nav id="nav">
+        <a class="nav-logo" href="#topo">bycoast</a>
+        <ul class="nav-links">
+            <li><a href="#trabalhos">Trabalhos</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#orcamento">Orçamento</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header id="topo" class="hero">
+        <h1>bycoast</h1>
+        <p class="hero-sub">Foto, vídeo e redes sociais para quem trabalha no litoral.</p>
+        <p class="hero-meta">Balneário Camboriú · Itajaí · Itapema</p>
+    </header>
+
+    <!-- TRABALHOS -->
+    <section id="trabalhos">
+        <div class="section-head">
+            <h2>Trabalhos</h2>
+
+            <!-- FILTROS -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="todos">Todos</button>
+                <button class="filter-btn" data-filter="oficina">Oficinas</button>
+                <button class="filter-btn" data-filter="nautica">Náutica</button>
+                <button class="filter-btn" data-filter="eventos">Eventos</button>
+            </div>
+        </div>
+
+        <!-- GRID (preenchido pelo main.js a partir do photos.json) -->
+        <div class="grid"></div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section id="servicos">
+        <h2>Serviços</h2>
+        <div class="services">
+            <div class="service">
+                <h3>Captação</h3>
+                <p>Foto e vídeo no seu espaço, com dia e horário marcados.</p>
+            </div>
+            <div class="service">
+                <h3>Edição</h3>
+                <p>Corte, cor e legenda, no formato certo para cada rede.</p>
+            </div>
+            <div class="service">
+                <h3>Plano mensal</h3>
+                <p>Captação, edição e postagem no seu Instagram todo mês.</p>
+            </div>
+        </div>
+        <p class="note">Valores sob consulta. Atendo também cidades próximas.</p>
+    </section>
+
+    <!-- ORÇAMENTO -->
+    <section id="orcamento">
+        <h2>Orçamento</h2>
+        <p class="lead">Conte o que você precisa. A mensagem abre pronta no WhatsApp.</p>
+
+        <form id="form" novalidate>
+            <div class="field">
+                <label for="nome">Nome</label>
+                <input id="nome" name="nome" autocomplete="name" placeholder="Seu nome ou empresa" />
+            </div>
+            <div class="field">
+                <label for="servico">Serviço</label>
+                <select id="servico" name="servico">
+                    <option>Captação</option>
+                    <option>Captação + edição</option>
+                    <option>Plano mensal</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="cidade">Cidade</label>
+                <select id="cidade" name="cidade">
+                    <option>Balneário Camboriú</option>
+                    <option>Itajaí</option>
+                    <option>Itapema</option>
+                    <option>Outra</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="data">Data</label>
+                <input id="data" name="data" type="date" />
+            </div>
+            <div class="field full">
+                <label for="msg">Mensagem</label>
+                <textarea id="msg" name="msg" rows="3" placeholder="Ex.: reforma de uma lancha, quero registrar a entrega"></textarea>
+            </div>
+            <p class="form-error full" id="form-error"></p>
+            <div class="full form-actions">
+                <button type="submit" class="btn">Enviar pelo WhatsApp</button>
+                <span class="privacy">Seus dados vão direto para o WhatsApp. Nada fica salvo no site.</span>
+            </div>
+        </form>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+        <button id="lightbox-close" aria-label="Fechar">&times;</button>
+        <button class="lightbox-nav" id="lightbox-prev" aria-label="Anterior">&#8592;</button>
+        <button class="lightbox-nav" id="lightbox-next" aria-label="Próxima">&#8594;</button>
+        <div class="lightbox-content">
+            <div id="lightbox-media"></div>
+            <div class="lightbox-info">
+                <span id="lightbox-counter"></span>
+                <span id="lightbox-title"></span>
+                <span id="lightbox-local"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <span>&copy; 2026 bycoast</span>
+        <div class="footer-links">
+            <a href="https://instagram.com/bycoast" target="_blank" rel="noopener">Instagram</a>
+            <a href="#orcamento">WhatsApp</a>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

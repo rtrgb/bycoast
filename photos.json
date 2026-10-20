@@ -1,0 +1,11 @@
+[
+  { "url": "img/placeholder-1.svg", "alt": "Reforma de casco", "category": "nautica", "type": "foto", "local": "Itajaí" },
+  { "url": "img/placeholder-2.svg", "alt": "Motor V8 aberto", "category": "oficina", "type": "foto", "local": "Balneário Camboriú" },
+  { "url": "img/placeholder-3.svg", "alt": "Sexta no bar", "category": "eventos", "type": "video", "video": "", "duracao": "0:21", "local": "Itapema" },
+  { "url": "img/placeholder-4.svg", "alt": "Pintura de convés", "category": "nautica", "type": "foto", "local": "Itajaí" },
+  { "url": "img/placeholder-5.svg", "alt": "Retífica de cabeçote", "category": "oficina", "type": "video", "video": "", "duracao": "0:29", "local": "Itajaí" },
+  { "url": "img/placeholder-6.svg", "alt": "Show acústico", "category": "eventos", "type": "foto", "local": "Balneário Camboriú" },
+  { "url": "img/placeholder-7.svg", "alt": "Entrega de lancha 26 pés", "category": "nautica", "type": "video", "video": "", "duracao": "1:04", "local": "Balneário Camboriú" },
+  { "url": "img/placeholder-8.svg", "alt": "Elevador hidráulico", "category": "oficina", "type": "foto", "local": "Itapema" },
+  { "url": "img/placeholder-9.svg", "alt": "Drinks da casa", "category": "eventos", "type": "foto", "local": "Itajaí" }
+]
