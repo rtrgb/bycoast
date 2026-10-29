@@ -64,6 +64,131 @@ a {
 }
 
 /* ========================
+   INTRO (tela de entrada)
+   Só existe com a classe "intro" no <html>
+======================== */
+#intro {
+    display: none;
+}
+
+.intro #intro {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+}
+
+/* máscara: o nome sobe de dentro dela */
+.intro-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 20px;
+}
+
+.intro-mark {
+    position: relative;
+    display: block;
+    font-size: clamp(2.75rem, 9vw, 6rem);
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    animation: introUp 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+/* a linha que cresce embaixo do nome */
+.intro-mark::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: -16px;
+    height: 1px;
+    background: var(--text);
+    animation: introLine 1.4s cubic-bezier(0.8, 0, 0.2, 1) 0.3s forwards;
+}
+
+.intro-pct {
+    position: absolute;
+    right: var(--side-r);
+    bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+}
+
+.intro-pct span {
+    color: var(--muted);
+}
+
+/* saída: a tela inteira sobe como uma cortina */
+#intro.gone {
+    pointer-events: none;
+    animation: introOut 1s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+}
+
+@keyframes introUp {
+    from {
+        transform: translateY(110%);
+    }
+}
+
+@keyframes introLine {
+    to {
+        right: 0;
+    }
+}
+
+@keyframes introOut {
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+/* enquanto a cortina sobe, o topo do site entra subindo, um depois do outro */
+.intro:not(.revealed) nav,
+.intro:not(.revealed) .hero > * {
+    opacity: 0;
+}
+
+.intro.revealed .hero > * {
+    animation: heroIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.intro.revealed .hero h1 {
+    animation-delay: 0.35s;
+}
+
+.intro.revealed .hero-sub {
+    animation-delay: 0.5s;
+}
+
+.intro.revealed .hero-meta {
+    animation-delay: 0.6s;
+}
+
+.intro.revealed nav {
+    animation: fadeIn 1s ease 0.7s backwards;
+}
+
+@keyframes heroIn {
+    from {
+        opacity: 0;
+        transform: translateY(48px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+}
+
+/* ========================
    NAVEGAÇÃO
 ======================== */
 nav {

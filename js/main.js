@@ -8,17 +8,71 @@ const WHATSAPP = '5547992019065';
 // ========================
 // CARREGAR FOTOS DO JSON
 // ========================
-fetch('photos.json')
+const siteReady = fetch('photos.json')
   .then(function (res) { return res.json(); })
   .then(function (photos) {
     renderGrid(photos);
     initFilters();
     initLightbox(photos);
+    return waitImages(3);
   })
   .catch(function () {
     document.querySelector('.grid').innerHTML =
       '<p class="note">Não consegui carregar o photos.json. Abra com o Live Server, não direto pelo arquivo.</p>';
   });
+
+runIntro(siteReady);
+
+// espera as primeiras fotos da galeria carregarem (ou darem erro)
+function waitImages(count) {
+  const imgs = Array.from(document.querySelectorAll('.photo-item img')).slice(0, count);
+  return Promise.all(imgs.map(function (img) {
+    if (img.complete) return null;
+    return new Promise(function (resolve) {
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    });
+  }));
+}
+
+// ========================
+// INTRO (tela de entrada)
+// O nome aparece, a linha cresce, o contador sobe
+// e, com o site pronto, a tela sobe como uma cortina
+// ========================
+function runIntro(ready) {
+  const html = document.documentElement;
+  if (!html.classList.contains('intro')) return;
+
+  const intro = document.getElementById('intro');
+  const pct = document.getElementById('intro-pct');
+  let p = 0;
+  let pronto = false;
+
+  document.body.classList.add('no-scroll');
+
+  // pronto = site carregado E a linha terminou de crescer (1,8s)
+  const minimo = new Promise(function (resolve) { setTimeout(resolve, 1800); });
+  Promise.all([ready, minimo]).then(function () { pronto = true; });
+  setTimeout(function () { pronto = true; }, 5000); // segurança: nunca prende mais que 5s
+
+  // o contador sobe aos saltos e espera no 90 até o site estar pronto
+  const timer = setInterval(function () {
+    p = Math.min(pronto ? 100 : 90, p + Math.random() * 18);
+    pct.textContent = pad(Math.round(p));
+    if (p >= 100) {
+      clearInterval(timer);
+      setTimeout(sair, 300);
+    }
+  }, 90);
+
+  function sair() {
+    intro.classList.add('gone');   // cortina sobe
+    html.classList.add('revealed'); // topo do site entra
+    document.body.classList.remove('no-scroll');
+    setTimeout(function () { intro.remove(); }, 1200);
+  }
+}
 
 function renderGrid(photos) {
   const grid = document.querySelector('.grid');

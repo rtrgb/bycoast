@@ -22,9 +22,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- liga a intro antes da página aparecer (assim o site não pisca por baixo).
+         Não aparece pra quem pediu "reduzir movimento" no sistema -->
+    <script>
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('intro');
+        }
+    </script>
 </head>
 
 <body>
+
+    <!-- INTRO (tela de entrada). Só aparece com a classe "intro" no <html> -->
+    <div id="intro" aria-hidden="true">
+        <span class="intro-mask"><span class="intro-mark">bycoast</span></span>
+        <span class="intro-pct"><span id="intro-pct">00</span> / 100</span>
+    </div>
 
     <!-- NAVEGAÇÃO -->
     <nav id="nav">
