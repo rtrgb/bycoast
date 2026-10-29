@@ -179,6 +179,9 @@ form.addEventListener('submit', function (e) {
   window.open(url, '_blank', 'noopener');
 });
 
+// link do WhatsApp no footer abre a conversa direto
+document.getElementById('footer-whatsapp').href = 'https://wa.me/' + WHATSAPP;
+
 // ========================
 // NAVEGAÇÃO ao rolar
 // ========================
