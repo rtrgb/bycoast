@@ -94,10 +94,12 @@ function initLightbox(photos) {
       .map(function (item) { return Number(item.dataset.index); });
     show(visible.indexOf(index));
     lightbox.classList.add('active');
+    document.body.classList.add('no-scroll'); // trava a página de trás
   }
 
   function close() {
     lightbox.classList.remove('active');
+    document.body.classList.remove('no-scroll');
     media.innerHTML = ''; // para o vídeo ao fechar
   }
 

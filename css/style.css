@@ -405,6 +405,11 @@ textarea {
     display: flex;
 }
 
+/* com o lightbox aberto, a página de trás não rola */
+body.no-scroll {
+    overflow: hidden;
+}
+
 #lightbox-close {
     position: fixed;
     top: calc(16px + env(safe-area-inset-top, 0px));
