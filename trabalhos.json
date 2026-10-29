@@ -1,0 +1,72 @@
+[
+  {
+    "id": "reforma-lancha-26",
+    "titulo": "Reforma de lancha 26 pés",
+    "categoria": "nautica",
+    "local": "Itajaí",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/boat-hull/1600/2000", "thumb": "https://picsum.photos/seed/boat-hull/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/boat-deck/1800/1200", "thumb": "https://picsum.photos/seed/boat-deck/800/533", "w": 1800, "h": 1200},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/speedboat/1600/2000", "thumb": "https://picsum.photos/seed/speedboat/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/marina-dock/1800/1200", "thumb": "https://picsum.photos/seed/marina-dock/800/533", "w": 1800, "h": 1200}
+    ]
+  },
+  {
+    "id": "retifica-v8",
+    "titulo": "Retífica de motor V8",
+    "categoria": "oficina",
+    "local": "Balneário Camboriú",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/v8-engine/1800/1200", "thumb": "https://picsum.photos/seed/v8-engine/800/533", "w": 1800, "h": 1200},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/cylinder-head/1600/2000", "thumb": "https://picsum.photos/seed/cylinder-head/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/garage-tools/1600/1600", "thumb": "https://picsum.photos/seed/garage-tools/800/800", "w": 1600, "h": 1600}
+    ]
+  },
+  {
+    "id": "sexta-no-bar",
+    "titulo": "Sexta no bar",
+    "categoria": "eventos",
+    "local": "Itapema",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/friday-bar/1600/2000", "thumb": "https://picsum.photos/seed/friday-bar/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/house-cocktail/1600/2000", "thumb": "https://picsum.photos/seed/house-cocktail/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/bar-crowd/1800/1200", "thumb": "https://picsum.photos/seed/bar-crowd/800/533", "w": 1800, "h": 1200}
+    ]
+  },
+  {
+    "id": "pintura-conves",
+    "titulo": "Pintura de convés",
+    "categoria": "nautica",
+    "local": "Itajaí",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/deck-paint/1600/1600", "thumb": "https://picsum.photos/seed/deck-paint/800/800", "w": 1600, "h": 1600},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/deck-detail/1600/2000", "thumb": "https://picsum.photos/seed/deck-detail/800/1000", "w": 1600, "h": 2000}
+    ]
+  },
+  {
+    "id": "elevador-hidraulico",
+    "titulo": "Elevador hidráulico",
+    "categoria": "oficina",
+    "local": "Itapema",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/hydraulic-lift/1800/1200", "thumb": "https://picsum.photos/seed/hydraulic-lift/800/533", "w": 1800, "h": 1200}
+    ]
+  },
+  {
+    "id": "show-acustico",
+    "titulo": "Show acústico",
+    "categoria": "eventos",
+    "local": "Balneário Camboriú",
+    "cliente": "",
+    "midias": [
+      {"tipo": "foto", "src": "https://picsum.photos/seed/acoustic-show/1600/2000", "thumb": "https://picsum.photos/seed/acoustic-show/800/1000", "w": 1600, "h": 2000},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/guitar-stage/1800/1200", "thumb": "https://picsum.photos/seed/guitar-stage/800/533", "w": 1800, "h": 1200},
+      {"tipo": "foto", "src": "https://picsum.photos/seed/stage-lights/1600/2000", "thumb": "https://picsum.photos/seed/stage-lights/800/1000", "w": 1600, "h": 2000}
+    ]
+  }
+]

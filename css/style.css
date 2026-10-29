@@ -151,11 +151,11 @@ a {
 
 /* enquanto a cortina sobe, o topo do site entra subindo, um depois do outro */
 .intro:not(.revealed) nav,
-.intro:not(.revealed) .hero > * {
+.intro:not(.revealed) .hero > :not(.hero-video) {
     opacity: 0;
 }
 
-.intro.revealed .hero > * {
+.intro.revealed .hero > :not(.hero-video) {
     animation: heroIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
 
@@ -270,6 +270,52 @@ nav.scrolled {
     color: var(--faint);
 }
 
+/* topo com vídeo (HERO_VIDEO no main.js): tela cheia, texto embaixo */
+.hero.has-video {
+    position: relative;
+    max-width: none;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 64px;
+    /* o texto continua alinhado com o resto do site */
+    padding-left: max(var(--side-l), calc((100% - 1200px) / 2 + 24px));
+    padding-right: max(var(--side-r), calc((100% - 1200px) / 2 + 24px));
+    overflow: hidden;
+    /* o vídeo (z-index -1) fica atrás do texto, mas na frente do fundo da página */
+    isolation: isolate;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* escurece embaixo (texto) e em cima (menu) pra ficarem legíveis */
+.hero.has-video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(to bottom, rgba(12, 13, 13, 0.6), transparent 20%),
+        linear-gradient(to top, var(--bg) 0%, rgba(12, 13, 13, 0.4) 45%, rgba(12, 13, 13, 0.2) 100%);
+}
+
+.hero.has-video .hero-sub {
+    color: var(--text);
+}
+
+.hero.has-video .hero-meta {
+    color: var(--muted);
+}
+
 /* ========================
    SEÇÕES GERAIS
 ======================== */
@@ -336,37 +382,74 @@ section h2 {
 }
 
 /* ========================
-   GALERIA (colunas estilo masonry)
+   GALERIA (colunas estilo masonry, um card por trabalho)
 ======================== */
 .grid {
     columns: 3;
-    column-gap: 12px;
+    column-gap: 16px;
 }
 
-.photo-item {
-    position: relative;
+.work {
     break-inside: avoid;
-    margin-bottom: 12px;
+    margin-bottom: 32px;
     cursor: pointer;
-    transition: opacity 0.3s;
 }
 
-.photo-item.hidden {
+.work.hidden {
     display: none;
 }
 
-.photo-item img {
-    width: 100%;
+/* aparece ao rolar: começa invisível e mais baixo (o main.js coloca "in") */
+.work.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.work.reveal.in {
+    opacity: 1;
+    transform: none;
+}
+
+.work-media {
+    position: relative;
+    overflow: hidden;
+    background: var(--line);
+}
+
+/* a capa de onde a foto saiu fica vazia enquanto o lightbox está aberto */
+.work.is-source .work-media {
+    visibility: hidden;
+}
+
+.work-media img {
     display: block;
-    transition: opacity 0.3s;
+    width: 100%;
+    height: auto;
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.photo-item:hover img {
-    opacity: 0.75;
+.work:hover .work-media img {
+    transform: scale(1.04);
 }
 
-/* selo de vídeo no canto da miniatura */
-.photo-item .tag {
+/* prévia do vídeo: fica por cima da capa e só aparece quando começa a tocar */
+.work-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.work-preview.playing {
+    opacity: 1;
+}
+
+/* selo no canto: quantas mídias ou duração do vídeo */
+.work .tag {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -374,7 +457,116 @@ section h2 {
     font-size: 0.7rem;
     color: #fff;
     background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     padding: 3px 7px;
+}
+
+.work-caption {
+    padding-top: 12px;
+}
+
+.work-caption h3 {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+}
+
+.work-caption p {
+    margin-top: 2px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+}
+
+.work:hover .work-caption h3 {
+    color: var(--accent);
+}
+
+/* ========================
+   QUEM JÁ ATENDEU (nomes passando em loop)
+======================== */
+.clients {
+    display: flex;
+    overflow: hidden;
+    /* as pontas somem suavemente */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+.clients ul {
+    display: flex;
+    flex-shrink: 0;
+    list-style: none;
+    animation: marquee 30s linear infinite;
+}
+
+.clients:hover ul {
+    animation-play-state: paused;
+}
+
+.clients li {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    color: var(--muted);
+}
+
+/* bolinha entre os nomes */
+.clients li::after {
+    content: '·';
+    margin: 0 0.6em;
+    color: var(--faint);
+}
+
+@keyframes marquee {
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .clients ul {
+        animation: none;
+    }
+}
+
+/* ========================
+   BOTÃO FLUTUANTE DO WHATSAPP (só no celular)
+======================== */
+.wa-float {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .wa-float {
+        display: grid;
+        place-items: center;
+        position: fixed;
+        z-index: 90;
+        right: var(--side-r);
+        bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        color: var(--bg);
+        background: var(--text);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transform: translateY(16px) scale(0.9);
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .wa-float.visible {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
 }
 
 /* ========================
@@ -538,11 +730,6 @@ textarea {
 /* com o lightbox aberto, a página de trás não rola */
 body.no-scroll {
     overflow: hidden;
-}
-
-/* a miniatura de onde a foto saiu fica vazia enquanto ela está ampliada */
-.photo-item.is-source {
-    visibility: hidden;
 }
 
 /* aparece ao abrir, some ao fechar */
@@ -799,9 +986,31 @@ body.no-scroll {
     opacity: 0.7;
 }
 
+.thumb {
+    position: relative;
+}
+
+.thumb.is-video::after {
+    content: '\25B6';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.6rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.3);
+}
+
 .thumb.current {
     opacity: 1;
     transform: translateY(-4px);
+}
+
+/* tela estreita: menos margem pras setas, que ficam por cima da foto */
+@media (max-width: 768px) {
+    #lightbox-media {
+        inset: 8px 16px;
+    }
 }
 
 /* celular: sem setas (arrasta com o dedo) e foto de ponta a ponta */

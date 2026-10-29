@@ -1,31 +1,98 @@
 // ========================
 // CONFIGURAÇÃO
+// ========================
+
 // Número do WhatsApp só com dígitos e DDI, ex.: '5547999999999'
 // Vazio = o WhatsApp abre e o cliente escolhe o contato
-// ========================
 const WHATSAPP = '5547992019065';
 
+// Vídeo que roda no fundo do topo (curto, sem som, em loop). Ex.: 'midia/hero.mp4'
+// Vazio = topo só com texto
+const HERO_VIDEO = '';
+
+// nome que aparece no site para cada categoria do trabalhos.json
+const CATEGORIAS = { oficina: 'Oficina', nautica: 'Náutica', eventos: 'Eventos' };
+
 // ========================
-// CARREGAR FOTOS DO JSON
+// UTILITÁRIOS
 // ========================
-const siteReady = fetch('photos.json')
+
+// respeita quem ligou "reduzir movimento" no sistema
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// true = tem mouse, false = só toque (celular)
+const canHover = window.matchMedia('(hover: hover)').matches;
+
+const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+
+// anima com a Web Animations API e devolve uma promessa que resolve no fim
+// fill 'forwards' segura o último quadro (usado quando o elemento vai sumir)
+function animate(el, frames, options) {
+  return el.animate(frames, {
+    duration: reduceMotion ? 0 : options.duration,
+    delay: reduceMotion ? 0 : (options.delay || 0),
+    easing: options.easing || EASE,
+    fill: options.fill || 'backwards'
+  }).finished.catch(function () {});
+}
+
+// transform que faz a caixa "de" aparecer em cima da caixa "para"
+// (funciona porque a foto usa transform-origin no canto 0 0)
+function rectTransform(de, para) {
+  return 'translate(' + (para.left - de.left) + 'px, ' + (para.top - de.top) + 'px) ' +
+    'scale(' + (para.width / de.width) + ', ' + (para.height / de.height) + ')';
+}
+
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
+function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
+}
+
+// protege textos do JSON antes de colocar no HTML (ex.: um título com aspas ou &)
+function esc(text) {
+  return String(text || '').replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+// "3 fotos · 1 vídeo"
+function contagem(midias) {
+  const fotos = midias.filter(function (m) { return m.tipo !== 'video'; }).length;
+  const videos = midias.length - fotos;
+  const partes = [];
+  if (fotos) partes.push(fotos + (fotos === 1 ? ' foto' : ' fotos'));
+  if (videos) partes.push(videos + (videos === 1 ? ' vídeo' : ' vídeos'));
+  return partes.join(' · ');
+}
+
+// ========================
+// CARREGAR TRABALHOS DO JSON
+// ========================
+const heroVideoReady = initHeroVideo();
+
+const siteReady = fetch('trabalhos.json')
   .then(function (res) { return res.json(); })
-  .then(function (photos) {
-    renderGrid(photos);
+  .then(function (works) {
+    renderGrid(works);
     initFilters();
-    initLightbox(photos);
-    return waitImages(3);
+    initReveal();
+    initPreviews();
+    initClients(works);
+    initLightbox(works);
+    return Promise.all([waitImages(3), heroVideoReady]);
   })
   .catch(function () {
     document.querySelector('.grid').innerHTML =
-      '<p class="note">Não consegui carregar o photos.json. Abra com o Live Server, não direto pelo arquivo.</p>';
+      '<p class="note">Não consegui carregar o trabalhos.json. Abra com o Live Server, não direto pelo arquivo.</p>';
   });
 
 runIntro(siteReady);
 
 // espera as primeiras fotos da galeria carregarem (ou darem erro)
 function waitImages(count) {
-  const imgs = Array.from(document.querySelectorAll('.photo-item img')).slice(0, count);
+  const imgs = Array.from(document.querySelectorAll('.work-media img')).slice(0, count);
   return Promise.all(imgs.map(function (img) {
     if (img.complete) return null;
     return new Promise(function (resolve) {
@@ -74,85 +141,221 @@ function runIntro(ready) {
   }
 }
 
-function renderGrid(photos) {
+// ========================
+// VÍDEO NO TOPO
+// ========================
+function initHeroVideo() {
+  if (!HERO_VIDEO) return Promise.resolve();
+
+  const hero = document.querySelector('.hero');
+  const video = document.createElement('video');
+  video.className = 'hero-video';
+  video.src = HERO_VIDEO;
+  video.muted = true;       // sem som, senão o navegador não deixa tocar sozinho
+  video.loop = true;
+  video.playsInline = true;
+  video.autoplay = !reduceMotion;
+  video.setAttribute('aria-hidden', 'true');
+  hero.prepend(video);
+  hero.classList.add('has-video');
+
+  // a intro espera o primeiro quadro do vídeo
+  return new Promise(function (resolve) {
+    video.addEventListener('loadeddata', resolve, { once: true });
+    video.addEventListener('error', resolve, { once: true });
+  });
+}
+
+// ========================
+// GALERIA (um card por trabalho)
+// ========================
+function renderGrid(works) {
   const grid = document.querySelector('.grid');
 
-  grid.innerHTML = photos.map(function (photo, i) {
-    const tag = photo.type === 'video' ? '<span class="tag">&#9654; ' + (photo.duracao || 'vídeo') + '</span>' : '';
+  grid.innerHTML = works.map(function (work, i) {
+    const capa = work.midias[0];
+    const meta = [CATEGORIAS[work.categoria] || work.categoria, work.local].filter(Boolean).join(' · ');
+
+    // selo no canto: duração se a capa for vídeo, senão quantas mídias tem
+    let tag = '';
+    if (capa.tipo === 'video') tag = '&#9654; ' + esc(capa.duracao || 'vídeo');
+    else if (work.midias.length > 1) tag = contagem(work.midias);
+
+    // capa em vídeo: a prévia curta toca por cima da imagem
+    const previa = capa.tipo === 'video' && capa.previa
+      ? '<video class="work-preview" src="' + esc(capa.previa) + '" muted loop playsinline preload="none"></video>'
+      : '';
+
     return (
-      '<div class="photo-item" data-index="' + i + '" data-category="' + photo.category + '">' +
-      '<img src="' + photo.url + '" alt="' + photo.alt + '" loading="lazy" />' +
-      tag +
-      '</div>'
+      '<article class="work" data-index="' + i + '" data-category="' + esc(work.categoria) + '">' +
+      '<div class="work-media">' +
+      '<img src="' + esc(capa.thumb) + '" alt="' + esc(work.titulo) + '" loading="lazy"' +
+      (capa.w ? ' width="' + capa.w + '" height="' + capa.h + '"' : '') + ' />' +
+      previa +
+      (tag ? '<span class="tag">' + tag + '</span>' : '') +
+      '</div>' +
+      '<div class="work-caption">' +
+      '<h3>' + esc(work.titulo) + '</h3>' +
+      '<p>' + esc(meta) + '</p>' +
+      '</div>' +
+      '</article>'
     );
   }).join('');
 }
 
 // ========================
-// FILTROS
+// FILTROS (os cards se reorganizam deslizando)
 // ========================
 function initFilters() {
   const buttons = document.querySelectorAll('.filter-btn');
-  const items = document.querySelectorAll('.photo-item');
+  const items = Array.from(document.querySelectorAll('.work'));
+  let filterId = 0;
 
-  // esconde o botão de categorias que ainda não têm foto
-  const categories = new Set(Array.from(items).map(function (item) { return item.dataset.category; }));
+  // esconde o botão de categorias que ainda não têm trabalho
+  const categories = new Set(items.map(function (item) { return item.dataset.category; }));
 
   buttons.forEach(function (btn) {
     const filter = btn.dataset.filter;
     if (filter !== 'todos' && !categories.has(filter)) btn.hidden = true;
 
     btn.addEventListener('click', function () {
+      if (btn.classList.contains('active')) return;
       buttons.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
+      applyFilter(filter);
+    });
+  });
+
+  function applyFilter(filter) {
+    const id = ++filterId;
+    const fits = function (item) { return filter === 'todos' || item.dataset.category === filter; };
+    const leaving = items.filter(function (item) { return !item.classList.contains('hidden') && !fits(item); });
+
+    // 1. os que saem somem rápido
+    Promise.all(leaving.map(function (item) {
+      return animate(item, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.96)' }], { duration: 200, fill: 'forwards' });
+    })).then(function () {
+      if (id !== filterId) return; // clicou em outro filtro no meio
+
+      // 2. guarda onde cada card estava (técnica FLIP: First, Last, Invert, Play)
+      const before = new Map();
+      items.forEach(function (item) {
+        if (!item.classList.contains('hidden')) before.set(item, item.getBoundingClientRect());
+      });
 
       items.forEach(function (item) {
-        const show = filter === 'todos' || item.dataset.category === filter;
-        item.classList.toggle('hidden', !show);
+        item.getAnimations().forEach(function (a) { a.cancel(); });
+        item.classList.toggle('hidden', !fits(item));
+        item.classList.add('in'); // já aparece, sem esperar o efeito de rolagem
+      });
+
+      // 3. quem ficou desliza da posição antiga até a nova; quem chegou aparece
+      let entrada = 0;
+      items.forEach(function (item) {
+        if (item.classList.contains('hidden')) return;
+        const old = before.get(item);
+        if (old) {
+          const now = item.getBoundingClientRect();
+          animate(item, [
+            { transform: 'translate(' + (old.left - now.left) + 'px, ' + (old.top - now.top) + 'px)' },
+            { transform: 'none' }
+          ], { duration: 600 });
+        } else {
+          animate(item, [
+            { opacity: 0, transform: 'translateY(24px) scale(0.96)' },
+            { opacity: 1, transform: 'none' }
+          ], { duration: 600, delay: 80 * entrada++ });
+        }
       });
     });
+  }
+}
+
+// ========================
+// CARDS APARECEM AO ROLAR
+// ========================
+function initReveal() {
+  const items = document.querySelectorAll('.work');
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    items.forEach(function (item) { item.classList.add('in'); });
+    return;
+  }
+
+  const observer = new IntersectionObserver(function (entries) {
+    // os que entram juntos aparecem um logo depois do outro
+    let ordem = 0;
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.style.transitionDelay = (ordem++ * 90) + 'ms';
+      entry.target.classList.add('in');
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -10% 0px' });
+
+  items.forEach(function (item) {
+    item.classList.add('reveal');
+    observer.observe(item);
   });
 }
 
 // ========================
-// LIGHTBOX (foto ampliada)
+// PRÉVIA DOS VÍDEOS NA GALERIA
+// Computador: toca com o mouse em cima. Celular: toca quando aparece na tela
 // ========================
+function initPreviews() {
+  const videos = document.querySelectorAll('.work-preview');
+  if (!videos.length || reduceMotion) return;
 
-// respeita quem ligou "reduzir movimento" no sistema
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-// true = tem mouse, false = só toque (celular)
-const canHover = window.matchMedia('(hover: hover)').matches;
+  function play(video) {
+    video.play().then(function () { video.classList.add('playing'); }).catch(function () {});
+  }
 
-const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
-const CATEGORIAS = { oficina: 'Oficina', nautica: 'Náutica', eventos: 'Eventos' };
+  function stop(video) {
+    video.pause();
+    video.classList.remove('playing');
+  }
 
-// anima com a Web Animations API e devolve uma promessa que resolve no fim
-// fill 'forwards' segura o último quadro (usado quando o elemento vai sumir)
-function animate(el, frames, options) {
-  return el.animate(frames, {
-    duration: reduceMotion ? 0 : options.duration,
-    delay: reduceMotion ? 0 : (options.delay || 0),
-    easing: EASE,
-    fill: options.fill || 'backwards'
-  }).finished.catch(function () {});
+  if (canHover) {
+    videos.forEach(function (video) {
+      const card = video.closest('.work');
+      card.addEventListener('mouseenter', function () { play(video); });
+      card.addEventListener('mouseleave', function () {
+        stop(video);
+        video.currentTime = 0;
+      });
+    });
+    return;
+  }
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) play(entry.target);
+      else stop(entry.target);
+    });
+  }, { threshold: 0.6 });
+
+  videos.forEach(function (video) { observer.observe(video); });
 }
 
-// transform que faz a caixa "de" aparecer em cima da caixa "para"
-// (funciona porque a foto usa transform-origin no canto 0 0)
-function rectTransform(de, para) {
-  return 'translate(' + (para.left - de.left) + 'px, ' + (para.top - de.top) + 'px) ' +
-    'scale(' + (para.width / de.width) + ', ' + (para.height / de.height) + ')';
+// ========================
+// QUEM JÁ ATENDEU (vem do campo "cliente" de cada trabalho)
+// ========================
+function initClients(works) {
+  const names = Array.from(new Set(works.map(function (work) { return (work.cliente || '').trim(); })))
+    .filter(Boolean);
+  if (!names.length) return; // sem clientes preenchidos, a seção fica escondida
+
+  const list = names.map(function (name) { return '<li>' + esc(name) + '</li>'; }).join('');
+  // a lista aparece duas vezes: quando a primeira sai pela esquerda, a segunda já está no lugar
+  document.getElementById('clients-track').innerHTML =
+    '<ul>' + list + '</ul><ul aria-hidden="true">' + list + '</ul>';
+  document.getElementById('clientes').hidden = false;
 }
 
-function pad(n) {
-  return String(n).padStart(2, '0');
-}
-
-function clamp(n, min, max) {
-  return Math.min(Math.max(n, min), max);
-}
-
-function initLightbox(photos) {
+// ========================
+// LIGHTBOX (mídias de um trabalho)
+// ========================
+function initLightbox(works) {
   const lightbox = document.getElementById('lightbox');
   const ambient = document.getElementById('lightbox-ambient');
   const stage = document.getElementById('lightbox-stage');
@@ -165,67 +368,78 @@ function initLightbox(photos) {
   const type = document.getElementById('lightbox-type');
   const title = document.getElementById('lightbox-title');
   const thumbs = document.getElementById('lightbox-thumbs');
-  const closeBtn = document.getElementById('lightbox-close');
   const grid = document.querySelector('.grid');
 
-  let visible = [];               // índices das fotos visíveis no filtro atual
-  let current = 0;                // posição dentro de "visible"
+  let work = null;                // trabalho aberto
+  let card = null;                // card dele na galeria
+  let list = [];                  // mídias do trabalho aberto
+  let current = 0;                // posição dentro de "list"
   let el = null;                  // <img> ou <video> que está na tela
   let renderId = 0;               // evita que trocas rápidas se atropelem
   let zoom = { s: 1, x: 0, y: 0 }; // escala e deslocamento da foto ampliada
   let dragX = 0;                  // quanto a foto foi arrastada pro lado
   let idleTimer = null;
 
-  // item da galeria que corresponde a uma posição
-  function itemOf(pos) {
-    return grid.querySelector('.photo-item[data-index="' + visible[pos] + '"]');
+  function cover() {
+    return card.querySelector('.work-media img');
   }
 
   // ---------- conteúdo ----------
 
-  // vídeo com arquivo: mostra o player. Senão, mostra a imagem
-  function render(photo) {
-    if (photo.type === 'video' && photo.video) {
-      media.innerHTML = '<video src="' + photo.video + '" poster="' + photo.url + '" controls playsinline></video>';
+  // mostra a mídia. Foto: aparece a miniatura (já carregada) e troca pela grande quando ela chegar
+  function render(m) {
+    if (m.tipo === 'video') {
+      media.innerHTML = '<video src="' + esc(m.src) + '" poster="' + esc(m.poster || m.thumb) + '" controls playsinline autoplay></video>';
     } else {
-      media.innerHTML = '<img src="' + photo.url + '" alt="' + photo.alt + '" draggable="false" />';
+      media.innerHTML = '<img src="' + esc(m.thumb || m.src) + '" alt="' + esc(work.titulo) + '" draggable="false" />';
+      if (m.thumb && m.src !== m.thumb) {
+        const target = media.firstElementChild;
+        const full = new Image();
+        full.onload = function () { if (target.isConnected) target.src = m.src; };
+        full.src = m.src;
+      }
     }
     el = media.firstElementChild;
+    fit(m);
     zoom = { s: 1, x: 0, y: 0 };
     dragX = 0;
     lightbox.classList.remove('zoomed');
   }
 
-  // espera a foto carregar, pra saber o tamanho final dela na tela
-  function ready(element) {
-    if (element.tagName === 'IMG') return element.decode().catch(function () {});
-    return new Promise(function (resolve) {
-      element.addEventListener('loadedmetadata', resolve, { once: true });
-      setTimeout(resolve, 300);
-    });
+  // calcula o tamanho na tela a partir de w/h do JSON, sem esperar a mídia carregar
+  function fit(m) {
+    if (!m.w || !m.h) return; // sem medidas: o CSS (max-width/max-height) resolve
+    const s = Math.min(media.clientWidth / m.w, media.clientHeight / m.h);
+    el.style.width = Math.round(m.w * s) + 'px';
+    el.style.height = Math.round(m.h * s) + 'px';
   }
 
-  function updateInfo(photo) {
-    counter.innerHTML = '<b>' + pad(current + 1) + '</b> / ' + pad(visible.length);
-    category.textContent = CATEGORIAS[photo.category] || photo.category;
-    local.textContent = photo.local || '';
-    localWrap.hidden = !photo.local;
-    type.textContent = '▶ ' + (photo.duracao || 'vídeo');
-    type.hidden = photo.type !== 'video';
-    title.textContent = photo.alt;
+  // categoria, local e título do trabalho (entram subindo, um depois do outro)
+  function updateWorkInfo() {
+    category.textContent = CATEGORIAS[work.categoria] || work.categoria;
+    local.textContent = work.local || '';
+    localWrap.hidden = !work.local;
+    title.textContent = work.titulo;
 
-    // categoria/local e título entram subindo, um depois do outro
     const from = { opacity: 0, transform: 'translateY(8px)' };
     const to = { opacity: 1, transform: 'none' };
     animate(meta, [from, to], { duration: 450, delay: 80 });
     animate(title, [from, to], { duration: 450, delay: 160 });
   }
 
-  // fundo: uma camada nova com a foto desfocada aparece por cima da anterior
-  function setAmbient(photo) {
+  // contador e selo de vídeo mudam a cada mídia
+  function updateMediaInfo() {
+    const m = list[current];
+    counter.innerHTML = '<b>' + pad(current + 1) + '</b> / ' + pad(list.length);
+    type.textContent = '▶ ' + (m.duracao || 'vídeo');
+    type.hidden = m.tipo !== 'video';
+  }
+
+  // fundo: uma camada nova com a mídia desfocada aparece por cima da anterior
+  function setAmbient(m) {
     const layer = document.createElement('div');
     layer.className = 'ambient-layer';
-    layer.style.backgroundImage = 'url("' + photo.url + '")';
+    layer.style.backgroundImage = 'url("' + (m.thumb || m.poster || m.src) + '")';
     ambient.appendChild(layer);
     animate(layer, [{ opacity: 0 }, { opacity: 1 }], { duration: 600 }).then(function () {
       if (!layer.isConnected) return;
@@ -235,17 +449,17 @@ function initLightbox(photos) {
   }
 
   function buildThumbs() {
-    thumbs.innerHTML = visible.map(function (index, pos) {
-      const photo = photos[index];
+    thumbs.innerHTML = list.map(function (m, pos) {
       return (
-        '<button class="thumb" data-pos="' + pos + '" aria-label="' + photo.alt + '">' +
-        '<img src="' + photo.url + '" alt="" draggable="false" />' +
+        '<button class="thumb' + (m.tipo === 'video' ? ' is-video' : '') + '" data-pos="' + pos + '" ' +
+        'aria-label="' + (m.tipo === 'video' ? 'Vídeo ' : 'Foto ') + (pos + 1) + '">' +
+        '<img src="' + esc(m.thumb || m.poster) + '" alt="" draggable="false" />' +
         '</button>'
       );
     }).join('');
   }
 
-  // marca a miniatura atual, esconde a original na galeria e pré-carrega as vizinhas
+  // marca a miniatura atual e pré-carrega as fotos vizinhas
   function sync() {
     Array.from(thumbs.children).forEach(function (thumb, pos) {
       thumb.classList.toggle('current', pos === current);
@@ -256,33 +470,30 @@ function initLightbox(photos) {
       behavior: reduceMotion ? 'auto' : 'smooth'
     });
 
-    // a miniatura na galeria fica vazia: é dali que a foto sai e pra onde volta
-    grid.querySelectorAll('.is-source').forEach(function (item) { item.classList.remove('is-source'); });
-    itemOf(current).classList.add('is-source');
-
-    // pré-carrega a anterior e a próxima, pra troca não ter espera
     [current - 1, current + 1].forEach(function (pos) {
-      const photo = photos[visible[(pos + visible.length) % visible.length]];
-      new Image().src = photo.url;
+      const m = list[(pos + list.length) % list.length];
+      if (m.tipo !== 'video') new Image().src = m.src;
     });
   }
 
   // ---------- abrir, trocar, fechar ----------
 
   function open(index) {
-    visible = Array.from(grid.querySelectorAll('.photo-item:not(.hidden)'))
-      .map(function (item) { return Number(item.dataset.index); });
-    current = visible.indexOf(index);
-    const photo = photos[index];
-    const from = itemOf(current).querySelector('img').getBoundingClientRect();
+    work = works[index];
+    card = grid.querySelector('.work[data-index="' + index + '"]');
+    list = work.midias;
+    current = 0;
+    const from = cover().getBoundingClientRect();
 
     lightbox.classList.add('active');
-    lightbox.classList.toggle('single', visible.length < 2);
+    lightbox.classList.toggle('single', list.length < 2);
     document.body.classList.add('no-scroll'); // trava a página de trás
+    card.classList.add('is-source');          // a capa fica vazia: é dali que a foto sai
     buildThumbs();
-    render(photo);
-    updateInfo(photo);
-    setAmbient(photo);
+    render(list[0]);
+    updateWorkInfo();
+    updateMediaInfo();
+    setAmbient(list[0]);
     sync();
     wake();
     lightbox.focus({ preventScroll: true }); // teclado (Esc, setas) já funciona
@@ -291,32 +502,26 @@ function initLightbox(photos) {
     void lightbox.offsetWidth;
     lightbox.classList.add('open');
 
-    // a foto cresce do lugar da miniatura até o centro
-    const element = el;
-    element.style.opacity = '0';
-    ready(element).then(function () {
-      if (element !== el) return;
-      element.style.opacity = '';
-      const to = element.getBoundingClientRect();
-      animate(element, [{ transform: rectTransform(to, from) }, { transform: 'none' }], { duration: 500 });
-    });
+    // a capa cresce do lugar dela na galeria até o centro
+    const to = el.getBoundingClientRect();
+    animate(el, [{ transform: rectTransform(to, from) }, { transform: 'none' }], { duration: 500 });
   }
 
-  // troca de foto. dir: 1 = próxima (entra pela direita), -1 = anterior
+  // troca de mídia. dir: 1 = próxima (entra pela direita), -1 = anterior
   function show(pos, dir) {
-    pos = (pos + visible.length) % visible.length;
+    pos = (pos + list.length) % list.length;
     if (pos === current) return;
     current = pos;
-    const photo = photos[visible[current]];
+    const m = list[current];
     const id = ++renderId;
     const old = el;
     el = null;
 
-    updateInfo(photo);
-    setAmbient(photo);
+    updateMediaInfo();
+    setAmbient(m);
     sync();
 
-    // a foto atual sai pro lado...
+    // a mídia atual sai pro lado...
     const leave = old ? animate(old, [
       { transform: old.style.transform || 'none', opacity: 1 },
       { transform: 'translateX(' + (dragX - dir * 100) + 'px)', opacity: 0 }
@@ -325,7 +530,7 @@ function initLightbox(photos) {
     leave.then(function () {
       if (id !== renderId) return; // já trocou de novo no meio do caminho
       // ...e a nova entra pelo outro
-      render(photo);
+      render(m);
       animate(el, [
         { transform: 'translateX(' + (dir * 100) + 'px)', opacity: 0 },
         { transform: 'none', opacity: 1 }
@@ -340,13 +545,13 @@ function initLightbox(photos) {
     lightbox.classList.remove('open', 'idle', 'zoomed');
     ambient.style.opacity = '';
 
-    const item = itemOf(current);
-    const target = item.querySelector('img').getBoundingClientRect();
+    const source = card;
+    const target = cover().getBoundingClientRect();
     const onScreen = target.bottom > 0 && target.top < window.innerHeight;
     let done = Promise.resolve();
 
-    if (el && onScreen) {
-      // a foto volta pro lugar da miniatura, saindo de onde estiver (arrastada ou com zoom)
+    if (el && onScreen && current === 0) {
+      // a capa volta pro lugar dela, saindo de onde estiver (arrastada ou com zoom)
       const now = el.getBoundingClientRect();
       el.classList.remove('zoom-anim');
       el.style.transform = '';
@@ -356,6 +561,7 @@ function initLightbox(photos) {
         { transform: rectTransform(base, target) }
       ], { duration: 420, fill: 'forwards' });
     } else if (el) {
+      // outra mídia (formato diferente da capa): só some
       done = animate(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: 'forwards' });
     }
 
@@ -365,9 +571,16 @@ function initLightbox(photos) {
       media.innerHTML = ''; // para o vídeo ao fechar
       ambient.innerHTML = '';
       el = null;
-      item.classList.remove('is-source');
+      source.classList.remove('is-source');
     });
   }
+
+  // girou o celular ou mudou o tamanho da janela: recalcula o tamanho da mídia
+  window.addEventListener('resize', function () {
+    if (!el || !lightbox.classList.contains('open')) return;
+    setZoom(1, 0, 0);
+    fit(list[current]);
+  });
 
   // ---------- controles que somem ----------
 
@@ -479,7 +692,7 @@ function initLightbox(photos) {
     // sem zoom: decide no começo se o arraste é pro lado ou pra baixo
     if (!gesture.axis) gesture.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
 
-    if (gesture.axis === 'x' && visible.length > 1) {
+    if (gesture.axis === 'x' && list.length > 1) {
       dragX = dx;
       el.style.transform = 'translateX(' + dx + 'px)';
     } else if (gesture.axis === 'y') {
@@ -519,7 +732,7 @@ function initLightbox(photos) {
     if (zoom.s > 1) return;
 
     ambient.style.transition = '';
-    if (!cancelled && g.axis === 'x' && Math.abs(dx) > 60 && visible.length > 1) {
+    if (!cancelled && g.axis === 'x' && Math.abs(dx) > 60 && list.length > 1) {
       const dir = dx < 0 ? 1 : -1;
       show(current + dir, dir);
     } else if (!cancelled && g.axis === 'y' && dy > 100) {
@@ -556,7 +769,7 @@ function initLightbox(photos) {
   // ---------- botões e teclado ----------
 
   grid.addEventListener('click', function (e) {
-    const item = e.target.closest('.photo-item');
+    const item = e.target.closest('.work');
     if (item && !lightbox.classList.contains('active')) open(Number(item.dataset.index));
   });
 
@@ -568,7 +781,7 @@ function initLightbox(photos) {
     show(current + 1, 1);
   });
 
-  closeBtn.addEventListener('click', close);
+  document.getElementById('lightbox-close').addEventListener('click', close);
 
   thumbs.addEventListener('click', function (e) {
     const thumb = e.target.closest('.thumb');
@@ -621,13 +834,27 @@ form.addEventListener('submit', function (e) {
   window.open(url, '_blank', 'noopener');
 });
 
-// link do WhatsApp no footer abre a conversa direto
-document.getElementById('footer-whatsapp').href = 'https://wa.me/' + WHATSAPP;
+// links que abrem a conversa direto (footer e botão flutuante)
+const waLink = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent('Olá! Vim pelo site da bycoast.');
+document.getElementById('footer-whatsapp').href = waLink;
+document.getElementById('wa-float').href = waLink;
 
 // ========================
-// NAVEGAÇÃO ao rolar
+// AO ROLAR: fundo do menu e botão do WhatsApp
 // ========================
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', function () {
+const waFloat = document.getElementById('wa-float');
+const hero = document.querySelector('.hero');
+const orcamento = document.getElementById('orcamento');
+
+function onScroll() {
   nav.classList.toggle('scrolled', window.scrollY > 40);
-}, { passive: true });
+
+  // o botão aparece depois do topo e some quando o formulário de orçamento está na tela
+  const passouTopo = hero.getBoundingClientRect().bottom < 0;
+  const noFormulario = orcamento.getBoundingClientRect().top < window.innerHeight * 0.8;
+  waFloat.classList.toggle('visible', passouTopo && !noFormulario);
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();

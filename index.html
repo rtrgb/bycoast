@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <!-- GRID (preenchido pelo main.js a partir do photos.json) -->
+        <!-- GRID (preenchido pelo main.js a partir do trabalhos.json) -->
         <div class="grid"></div>
     </section>
 
@@ -93,6 +93,13 @@
             </div>
         </div>
         <p class="note">Valores sob consulta. Atendo também cidades próximas.</p>
+    </section>
+
+    <!-- QUEM JÁ ATENDEU (o main.js preenche com o campo "cliente" do trabalhos.json;
+         sem nenhum cliente preenchido, a seção fica escondida) -->
+    <section id="clientes" hidden>
+        <h2>Quem já atendeu</h2>
+        <div class="clients" id="clients-track"></div>
     </section>
 
     <!-- ORÇAMENTO -->
@@ -189,6 +196,11 @@
             <a id="footer-whatsapp" href="#orcamento" target="_blank" rel="noopener">WhatsApp</a>
         </div>
     </footer>
+
+    <!-- BOTÃO FLUTUANTE DO WHATSAPP (só no celular) -->
+    <a class="wa-float" id="wa-float" href="#orcamento" target="_blank" rel="noopener" aria-label="Conversar no WhatsApp">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.4-4A8.5 8.5 0 1 1 20 11.5z" /></svg>
+    </a>
 
     <script src="js/main.js"></script>
 </body>
