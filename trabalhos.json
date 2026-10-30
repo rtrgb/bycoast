@@ -1,72 +1,110 @@
 [
   {
-    "id": "reforma-lancha-26",
-    "titulo": "Reforma de lancha 26 pés",
-    "categoria": "nautica",
-    "local": "Itajaí",
-    "cliente": "",
+    "id": "fx",
+    "titulo": "Envelopamento automotivo",
+    "categoria": "automotivo",
+    "local": "Balneário Camboriú",
+    "cliente": "FX",
     "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/boat-hull/1600/2000", "thumb": "https://picsum.photos/seed/boat-hull/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/boat-deck/1800/1200", "thumb": "https://picsum.photos/seed/boat-deck/800/533", "w": 1800, "h": 1200},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/speedboat/1600/2000", "thumb": "https://picsum.photos/seed/speedboat/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/marina-dock/1800/1200", "thumb": "https://picsum.photos/seed/marina-dock/800/533", "w": 1800, "h": 1200}
+      {"tipo": "video", "src": "midia/fx/01-motorhome.mp4", "poster": "midia/fx/01-motorhome.jpg", "thumb": "midia/fx/01-motorhome-thumb.jpg", "previa": "midia/fx/01-motorhome-previa.mp4", "duracao": "1:54", "w": 2000, "h": 1126, "inicio": 69.6},
+      {"tipo": "video", "src": "midia/fx/02-th-pronto.mp4", "poster": "midia/fx/02-th-pronto.jpg", "thumb": "midia/fx/02-th-pronto-thumb.jpg", "previa": "midia/fx/02-th-pronto-previa.mp4", "duracao": "1:00", "w": 1920, "h": 1080, "inicio": 18},
+      {"tipo": "video", "src": "midia/fx/03-honda-750.mp4", "poster": "midia/fx/03-honda-750.jpg", "thumb": "midia/fx/03-honda-750-thumb.jpg", "previa": "midia/fx/03-honda-750-previa.mp4", "duracao": "1:01", "inicio": 18, "w": 1126, "h": 2000},
+      {"tipo": "video", "src": "midia/fx/04-story-thiago.mp4", "poster": "midia/fx/04-story-thiago.jpg", "thumb": "midia/fx/04-story-thiago-thumb.jpg", "previa": "midia/fx/04-story-thiago-previa.mp4", "duracao": "0:30", "w": 1126, "h": 2000, "inicio": 9},
+      {"tipo": "video", "src": "midia/fx/05-thiago-fechamento.mp4", "poster": "midia/fx/05-thiago-fechamento.jpg", "thumb": "midia/fx/05-thiago-fechamento-thumb.jpg", "previa": "midia/fx/05-thiago-fechamento-previa.mp4", "duracao": "1:42", "inicio": 31, "w": 2000, "h": 1126},
+      {"tipo": "video", "src": "midia/fx/06-tiago-pronto.mp4", "poster": "midia/fx/06-tiago-pronto.jpg", "thumb": "midia/fx/06-tiago-pronto-thumb.jpg", "previa": "midia/fx/06-tiago-pronto-previa.mp4", "duracao": "1:58", "inicio": 35, "w": 1080, "h": 1920}
     ]
   },
   {
-    "id": "retifica-v8",
-    "titulo": "Retífica de motor V8",
-    "categoria": "oficina",
+    "id": "brava-drinks",
+    "titulo": "Coquetelaria",
+    "categoria": "gastronomia",
+    "local": "Balneário Camboriú",
+    "cliente": "Brava Drinks",
+    "midias": [
+      {"tipo": "foto", "src": "midia/brava-drinks/01-brava-drinks.jpg", "thumb": "midia/brava-drinks/01-brava-drinks-thumb.jpg", "w": 2000, "h": 1333},
+      {"tipo": "foto", "src": "midia/brava-drinks/02-brava-drinks.jpg", "thumb": "midia/brava-drinks/02-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/03-brava-drinks.jpg", "thumb": "midia/brava-drinks/03-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/04-brava-drinks.jpg", "thumb": "midia/brava-drinks/04-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/05-brava-drinks.jpg", "thumb": "midia/brava-drinks/05-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/06-brava-drinks.jpg", "thumb": "midia/brava-drinks/06-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/07-brava-drinks.jpg", "thumb": "midia/brava-drinks/07-brava-drinks-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/brava-drinks/08-brava-drinks.jpg", "thumb": "midia/brava-drinks/08-brava-drinks-thumb.jpg", "w": 1333, "h": 2000}
+    ]
+  },
+  {
+    "id": "embarcacao-68",
+    "titulo": "Reforma de embarcação",
+    "categoria": "nautica",
     "local": "Balneário Camboriú",
     "cliente": "",
     "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/v8-engine/1800/1200", "thumb": "https://picsum.photos/seed/v8-engine/800/533", "w": 1800, "h": 1200},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/cylinder-head/1600/2000", "thumb": "https://picsum.photos/seed/cylinder-head/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/garage-tools/1600/1600", "thumb": "https://picsum.photos/seed/garage-tools/800/800", "w": 1600, "h": 1600}
+      {"tipo": "video", "src": "midia/embarcacao-68/01-embarcacao-68.mp4", "poster": "midia/embarcacao-68/01-embarcacao-68.jpg", "thumb": "midia/embarcacao-68/01-embarcacao-68-thumb.jpg", "previa": "midia/embarcacao-68/01-embarcacao-68-previa.mp4", "duracao": "1:38", "w": 2000, "h": 1126, "inicio": 29}
     ]
   },
   {
-    "id": "sexta-no-bar",
-    "titulo": "Sexta no bar",
-    "categoria": "eventos",
-    "local": "Itapema",
-    "cliente": "",
+    "id": "zagara",
+    "titulo": "Buffet para eventos",
+    "categoria": "gastronomia",
+    "local": "Balneário Camboriú",
+    "cliente": "Zagara",
     "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/friday-bar/1600/2000", "thumb": "https://picsum.photos/seed/friday-bar/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/house-cocktail/1600/2000", "thumb": "https://picsum.photos/seed/house-cocktail/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/bar-crowd/1800/1200", "thumb": "https://picsum.photos/seed/bar-crowd/800/533", "w": 1800, "h": 1200}
+      {"tipo": "foto", "src": "midia/zagara/01-dsc02131.jpg", "thumb": "midia/zagara/01-dsc02131-thumb.jpg", "w": 2000, "h": 1333},
+      {"tipo": "foto", "src": "midia/zagara/02-dsc01998.jpg", "thumb": "midia/zagara/02-dsc01998-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/03-dsc02002.jpg", "thumb": "midia/zagara/03-dsc02002-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/04-dsc02046.jpg", "thumb": "midia/zagara/04-dsc02046-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/05-dsc02050.jpg", "thumb": "midia/zagara/05-dsc02050-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/06-dsc02069.jpg", "thumb": "midia/zagara/06-dsc02069-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/07-zagara-katia.jpg", "thumb": "midia/zagara/07-zagara-katia-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/08-zagara-katia.jpg", "thumb": "midia/zagara/08-zagara-katia-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/09-zagara-katia.jpg", "thumb": "midia/zagara/09-zagara-katia-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/10-zagara-katia.jpg", "thumb": "midia/zagara/10-zagara-katia-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/11-zagara-katia.jpg", "thumb": "midia/zagara/11-zagara-katia-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/zagara/12-zagara-katia.jpg", "thumb": "midia/zagara/12-zagara-katia-thumb.jpg", "w": 1333, "h": 2000}
     ]
   },
   {
-    "id": "pintura-conves",
-    "titulo": "Pintura de convés",
-    "categoria": "nautica",
-    "local": "Itajaí",
-    "cliente": "",
+    "id": "storm",
+    "titulo": "Barbearia",
+    "categoria": "negocios",
+    "local": "Balneário Camboriú",
+    "cliente": "Storm",
     "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/deck-paint/1600/1600", "thumb": "https://picsum.photos/seed/deck-paint/800/800", "w": 1600, "h": 1600},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/deck-detail/1600/2000", "thumb": "https://picsum.photos/seed/deck-detail/800/1000", "w": 1600, "h": 2000}
+      {"tipo": "video", "src": "midia/storm/01-storm.mp4", "poster": "midia/storm/01-storm.jpg", "thumb": "midia/storm/01-storm-thumb.jpg", "previa": "midia/storm/01-storm-previa.mp4", "duracao": "0:52", "w": 2000, "h": 1126, "inicio": 16},
+      {"tipo": "foto", "src": "midia/storm/02-dsc01946.jpg", "thumb": "midia/storm/02-dsc01946-thumb.jpg", "w": 2000, "h": 1333},
+      {"tipo": "foto", "src": "midia/storm/03-dsc01949.jpg", "thumb": "midia/storm/03-dsc01949-thumb.jpg", "w": 2000, "h": 1333}
     ]
   },
   {
-    "id": "elevador-hidraulico",
-    "titulo": "Elevador hidráulico",
-    "categoria": "oficina",
-    "local": "Itapema",
-    "cliente": "",
-    "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/hydraulic-lift/1800/1200", "thumb": "https://picsum.photos/seed/hydraulic-lift/800/533", "w": 1800, "h": 1200}
-    ]
-  },
-  {
-    "id": "show-acustico",
-    "titulo": "Show acústico",
+    "id": "casamento",
+    "titulo": "Casamento",
     "categoria": "eventos",
     "local": "Balneário Camboriú",
     "cliente": "",
     "midias": [
-      {"tipo": "foto", "src": "https://picsum.photos/seed/acoustic-show/1600/2000", "thumb": "https://picsum.photos/seed/acoustic-show/800/1000", "w": 1600, "h": 2000},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/guitar-stage/1800/1200", "thumb": "https://picsum.photos/seed/guitar-stage/800/533", "w": 1800, "h": 1200},
-      {"tipo": "foto", "src": "https://picsum.photos/seed/stage-lights/1600/2000", "thumb": "https://picsum.photos/seed/stage-lights/800/1000", "w": 1600, "h": 2000}
+      {"tipo": "video", "src": "midia/casamento/01-casamento.mp4", "poster": "midia/casamento/01-casamento.jpg", "thumb": "midia/casamento/01-casamento-thumb.jpg", "previa": "midia/casamento/01-casamento-previa.mp4", "duracao": "1:16", "w": 2000, "h": 1126, "inicio": 1}
+    ]
+  },
+  {
+    "id": "r3",
+    "titulo": "Estética automotiva",
+    "categoria": "automotivo",
+    "local": "Balneário Camboriú",
+    "cliente": "R3",
+    "midias": [
+      {"tipo": "foto", "src": "midia/r3/01-r3.jpg", "thumb": "midia/r3/01-r3-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/r3/02-r3.jpg", "thumb": "midia/r3/02-r3-thumb.jpg", "w": 1333, "h": 2000},
+      {"tipo": "foto", "src": "midia/r3/03-r3.jpg", "thumb": "midia/r3/03-r3-thumb.jpg", "w": 1333, "h": 2000}
+    ]
+  },
+  {
+    "id": "rene",
+    "titulo": "Mecânica automotiva",
+    "categoria": "automotivo",
+    "local": "Balneário Camboriú",
+    "cliente": "Renne",
+    "midias": [
+      {"tipo": "video", "src": "midia/rene/01-rene-2.mp4", "poster": "midia/rene/01-rene-2.jpg", "thumb": "midia/rene/01-rene-2-thumb.jpg", "previa": "midia/rene/01-rene-2-previa.mp4", "duracao": "0:47", "w": 1126, "h": 2000, "inicio": 14},
+      {"tipo": "video", "src": "midia/rene/02-rene-video-3.mp4", "poster": "midia/rene/02-rene-video-3.jpg", "thumb": "midia/rene/02-rene-video-3-thumb.jpg", "previa": "midia/rene/02-rene-video-3-previa.mp4", "duracao": "1:03", "inicio": 19, "w": 1126, "h": 2000}
     ]
   }
 ]

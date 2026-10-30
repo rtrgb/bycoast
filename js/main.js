@@ -10,8 +10,14 @@ const WHATSAPP = '5547992019065';
 // Vazio = topo só com texto
 const HERO_VIDEO = '';
 
-// nome que aparece no site para cada categoria do trabalhos.json
-const CATEGORIAS = { oficina: 'Oficina', nautica: 'Náutica', eventos: 'Eventos' };
+// categorias do trabalhos.json e o nome que aparece no site (a ordem aqui é a ordem dos filtros)
+const CATEGORIAS = {
+  automotivo: 'Automotivo',
+  nautica: 'Náutica',
+  eventos: 'Eventos',
+  gastronomia: 'Gastronomia',
+  negocios: 'Negócios'
+};
 
 // ========================
 // UTILITÁRIOS
@@ -81,7 +87,7 @@ const siteReady = fetch('trabalhos.json')
     initPreviews();
     initClients(works);
     initLightbox(works);
-    return Promise.all([waitImages(3), heroVideoReady]);
+    return Promise.all([waitImages(1), heroVideoReady]);
   })
   .catch(function () {
     document.querySelector('.grid').innerHTML =
@@ -121,7 +127,7 @@ function runIntro(ready) {
   // pronto = site carregado E a linha terminou de crescer (1,8s)
   const minimo = new Promise(function (resolve) { setTimeout(resolve, 1800); });
   Promise.all([ready, minimo]).then(function () { pronto = true; });
-  setTimeout(function () { pronto = true; }, 5000); // segurança: nunca prende mais que 5s
+  setTimeout(function () { pronto = true; }, 3000); // segurança: nunca prende mais que 3s
 
   // o contador sobe aos saltos e espera no 90 até o site estar pronto
   const timer = setInterval(function () {
@@ -176,10 +182,10 @@ function renderGrid(works) {
     const capa = work.midias[0];
     const meta = [CATEGORIAS[work.categoria] || work.categoria, work.local].filter(Boolean).join(' · ');
 
-    // selo no canto: duração se a capa for vídeo, senão quantas mídias tem
+    // selo no canto: quantas mídias tem; se for um vídeo só, a duração dele
     let tag = '';
-    if (capa.tipo === 'video') tag = '&#9654; ' + esc(capa.duracao || 'vídeo');
-    else if (work.midias.length > 1) tag = contagem(work.midias);
+    if (work.midias.length > 1) tag = contagem(work.midias);
+    else if (capa.tipo === 'video') tag = '&#9654; ' + esc(capa.duracao || 'vídeo');
 
     // capa em vídeo: a prévia curta toca por cima da imagem
     const previa = capa.tipo === 'video' && capa.previa
@@ -207,16 +213,19 @@ function renderGrid(works) {
 // FILTROS (os cards se reorganizam deslizando)
 // ========================
 function initFilters() {
-  const buttons = document.querySelectorAll('.filter-btn');
   const items = Array.from(document.querySelectorAll('.work'));
   let filterId = 0;
 
-  // esconde o botão de categorias que ainda não têm trabalho
-  const categories = new Set(items.map(function (item) { return item.dataset.category; }));
+  // um botão pra cada categoria que tem pelo menos um trabalho
+  const usadas = new Set(items.map(function (item) { return item.dataset.category; }));
+  document.querySelector('.filters').insertAdjacentHTML('beforeend',
+    Object.keys(CATEGORIAS).filter(function (cat) { return usadas.has(cat); }).map(function (cat) {
+      return '<button class="filter-btn" data-filter="' + cat + '">' + CATEGORIAS[cat] + '</button>';
+    }).join(''));
 
+  const buttons = document.querySelectorAll('.filter-btn');
   buttons.forEach(function (btn) {
     const filter = btn.dataset.filter;
-    if (filter !== 'todos' && !categories.has(filter)) btn.hidden = true;
 
     btn.addEventListener('click', function () {
       if (btn.classList.contains('active')) return;

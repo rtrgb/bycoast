@@ -69,7 +69,8 @@ brew install ffmpeg      # pra processar vídeos (fotos já funcionam sem nada)
    }
    ```
 
-   - `categoria`: `oficina`, `nautica` ou `eventos`
+   - `categoria`: `automotivo`, `nautica`, `eventos`, `gastronomia` ou `negocios`
+     (a lista fica em `CATEGORIAS`, no topo do `js/main.js`. Pra criar outra, é só adicionar lá)
    - `cliente`: opcional. Os nomes preenchidos aparecem na seção "Quem já atendeu"
    - `midias`: **a primeira é a capa** do card. Pra trocar a capa, mova a linha pra cima
    - **A ordem dos trabalhos no arquivo é a ordem na galeria** (o script coloca os novos no topo)
@@ -95,6 +96,8 @@ Apague o bloco (ou a linha) no `trabalhos.json`. Se quiser, apague também a pas
 - O ideal é vídeo curto (até uns 60s). O script comprime e avisa se ainda ficar acima de 50 MB.
 - Pra cada vídeo ele gera: o vídeo, uma **prévia de 4s sem som** (toca na galeria), a **capa** e a miniatura.
 - A duração (`"duracao": "0:21"`) é preenchida sozinha.
+- A capa e a prévia saem de 30% do vídeo (o começo costuma ser tela preta ou título).
+  Pra escolher outro momento, coloque `"inicio": 12` (em segundos) naquele vídeo e rode o script de novo.
 
 ## Configurar
 
@@ -102,7 +105,7 @@ No topo do `js/main.js`:
 
 - `WHATSAPP`: número só com dígitos, com 55 e DDD.
 - `HERO_VIDEO`: vídeo do fundo do topo (ex.: `'midia/hero.mp4'`). Curto, sem som, em loop. Vazio = topo só com texto.
-- `CATEGORIAS`: nome que aparece no site para cada categoria.
+- `CATEGORIAS`: categorias e o nome que aparece no site. Os filtros da galeria saem daqui, na mesma ordem.
 
 Instagram: link no footer do `index.html`.
 
@@ -112,7 +115,8 @@ Instagram: link no footer do `index.html`.
 - [x] @ do Instagram (by.coast_)
 - [x] Publicar no GitHub Pages
 - [x] Organizar por trabalho + script de atualização
-- [ ] Trocar os exemplos (picsum) pelos trabalhos reais
+- [x] Trocar os exemplos (picsum) pelos trabalhos reais
+- [ ] Preencher as cidades ("local") no trabalhos.json
 - [ ] Vídeo do topo (HERO_VIDEO)
-- [ ] Foto real na prévia do link (og:image no index.html)
+- [x] Foto real na prévia do link (og:image no index.html)
 - [ ] Painel para o dono subir fotos sem mexer no código

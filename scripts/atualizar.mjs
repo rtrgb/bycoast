@@ -16,7 +16,7 @@
 // ========================
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -29,9 +29,9 @@ const FOTOS = ['.jpg', '.jpeg', '.png', '.heic', '.heif', '.webp', '.tif', '.tif
 const VIDEOS = ['.mp4', '.mov', '.m4v'];
 
 const FOTO_GRANDE = 2000; // lado maior da foto no lightbox
-const FOTO_THUMB = 900;   // lado maior da miniatura na galeria
+const THUMB_LARGURA = 800;  // largura da miniatura e da prévia na galeria.
+                            // Um card tem ~380px; telas Retina mostram o dobro de pixels
 const VIDEO_MAX = 1920;   // lado maior do vídeo
-const PREVIA_MAX = 640;   // lado maior da prévia que toca na galeria
 const PREVIA_SEG = 4;     // duração da prévia, em segundos
 const AVISO_MB = 50;      // o GitHub reclama de arquivos acima de 50 MB (e recusa acima de 100)
 
@@ -93,11 +93,19 @@ function jpg(origem, destino, lado, qualidade) {
   ]);
 }
 
+// miniatura: limita a LARGURA (é ela que importa no card), pra vertical não ficar borrada
+function thumbJpg(origem, destino) {
+  if (!desatualizado(origem, destino)) return;
+  const { w, h } = medidas(origem);
+  const lado = Math.round(Math.min(THUMB_LARGURA, w) * Math.max(w, h) / w);
+  jpg(origem, destino, lado, 78);
+}
+
 function processarFoto(origem, pasta, nome) {
   const grande = join(pasta, nome + '.jpg');
   const thumb = join(pasta, nome + '-thumb.jpg');
   jpg(origem, grande, FOTO_GRANDE, 82);
-  jpg(origem, thumb, FOTO_THUMB, 75);
+  thumbJpg(origem, thumb);
   const { w, h } = medidas(grande);
   return { tipo: 'foto', src: rel(grande), thumb: rel(thumb), w, h };
 }
@@ -109,43 +117,61 @@ function escala(lado) {
   return "scale='if(gt(iw,ih),min(" + lado + ",iw),-2)':'if(gt(iw,ih),-2,min(" + lado + ",ih))'";
 }
 
+// limita só a largura (usado na prévia da galeria)
+function escalaLargura(largura) {
+  return "scale='min(" + largura + ",iw)':-2";
+}
+
+function segundos(arquivo) {
+  return Number(run('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', arquivo]));
+}
+
 function duracao(arquivo) {
-  const seg = Number(run('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', arquivo]));
-  const s = Math.round(seg);
+  const s = Math.round(segundos(arquivo));
   return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
 }
 
-function processarVideo(origem, pasta, nome) {
+// inicio = segundo de onde saem a capa e a prévia.
+// Sem "inicio" no JSON: 30% do vídeo (o começo costuma ser tela preta, título ou fade)
+function processarVideo(origem, pasta, nome, inicioJson) {
   const video = join(pasta, nome + '.mp4');
   const previa = join(pasta, nome + '-previa.mp4');
   const poster = join(pasta, nome + '.jpg');
   const thumb = join(pasta, nome + '-thumb.jpg');
 
-  // vídeo principal: H.264 + AAC, começa a tocar antes de baixar tudo (+faststart)
+  // anota o "inicio" usado; se mudar no JSON, refaz capa e prévia
+  const inicio = typeof inicioJson === 'number' ? inicioJson : Math.round(segundos(origem) * 0.3);
+  const marca = join(pasta, nome + '.inicio');
+  const mudou = !existsSync(marca) || readFileSync(marca, 'utf8') !== String(inicio);
+
+  // vídeo principal: H.264 + AAC, começa a tocar antes de baixar tudo (+faststart).
+  // No máximo 3 Mbps: até um vídeo de 2 min fica abaixo dos 50 MB do GitHub
   if (desatualizado(origem, video)) {
     run('ffmpeg', ['-y', '-v', 'error', '-i', origem, '-vf', escala(VIDEO_MAX),
-      '-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-pix_fmt', 'yuv420p',
+      '-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-maxrate', '3M', '-bufsize', '6M', '-pix_fmt', 'yuv420p',
       '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', video]);
   }
 
   // prévia da galeria: curta, pequena e sem som
-  if (desatualizado(origem, previa)) {
-    run('ffmpeg', ['-y', '-v', 'error', '-i', origem, '-t', String(PREVIA_SEG), '-vf', escala(PREVIA_MAX),
-      '-c:v', 'libx264', '-preset', 'slow', '-crf', '30', '-pix_fmt', 'yuv420p', '-an',
+  if (mudou || desatualizado(origem, previa)) {
+    run('ffmpeg', ['-y', '-v', 'error', '-ss', String(inicio), '-i', origem, '-t', String(PREVIA_SEG), '-vf', escalaLargura(THUMB_LARGURA),
+      '-c:v', 'libx264', '-preset', 'slow', '-crf', '25', '-pix_fmt', 'yuv420p', '-an',
       '-movflags', '+faststart', previa]);
   }
 
-  // capa: um quadro do primeiro segundo
-  if (desatualizado(origem, poster)) {
-    run('ffmpeg', ['-y', '-v', 'error', '-ss', '1', '-i', origem, '-frames:v', '1',
+  // capa: um quadro do mesmo ponto da prévia
+  if (mudou || desatualizado(origem, poster)) {
+    run('ffmpeg', ['-y', '-v', 'error', '-ss', String(inicio), '-i', origem, '-frames:v', '1', '-update', '1',
       '-vf', escala(FOTO_GRANDE), '-q:v', '3', poster]);
   }
-  jpg(poster, thumb, FOTO_THUMB, 75);
+  if (mudou) rmSync(thumb, { force: true });
+  thumbJpg(poster, thumb);
+  writeFileSync(marca, String(inicio));
 
   const { w, h } = medidas(poster);
   return {
     tipo: 'video', src: rel(video), poster: rel(poster), thumb: rel(thumb), previa: rel(previa),
-    duracao: duracao(video), w, h
+    duracao: duracao(video), inicio, w, h
   };
 }
 
@@ -210,6 +236,7 @@ for (const pastaNome of pastas) {
     const origem = join(origemPasta, arquivo);
     const nome = slug(basename(arquivo, extname(arquivo)));
     let midia = null;
+    const antes = work.midias.find(function (m) { return m.src === rel(join(destinoPasta, nome + (FOTOS.includes(ext) ? '.jpg' : '.mp4'))); });
 
     try {
       if (FOTOS.includes(ext)) {
@@ -219,7 +246,7 @@ for (const pastaNome of pastas) {
           avisos.push('Pulei ' + pastaNome + '/' + arquivo + ': vídeos precisam do ffmpeg (brew install ffmpeg).');
           continue;
         }
-        midia = processarVideo(origem, destinoPasta, nome);
+        midia = processarVideo(origem, destinoPasta, nome, antes && antes.inicio);
       } else {
         continue; // outros arquivos são ignorados
       }
@@ -252,7 +279,7 @@ console.log('\ntrabalhos.json atualizado: ' + finais.length + ' trabalhos.');
 
 const incompletos = finais.filter(function (w) { return !w.categoria || !w.local; });
 if (incompletos.length) {
-  console.log('\nFalta preencher no trabalhos.json (categoria: oficina, nautica ou eventos):');
+  console.log('\nFalta preencher no trabalhos.json (categoria: automotivo, nautica, eventos, gastronomia ou negocios):');
   incompletos.forEach(function (w) {
     const falta = [!w.categoria && 'categoria', !w.local && 'local'].filter(Boolean).join(' e ');
     console.log('  - ' + w.id + ': ' + falta);

@@ -1071,6 +1071,10 @@ footer {
     .nav-links {
         gap: 20px;
     }
+
+    .filters {
+        gap: 8px 18px;
+    }
 }
 
 /* ========================
