@@ -8,3 +8,4 @@ originais/
 # versão para a Cloudflare (gerada pelo scripts/build.sh)
 dist/
 .wrangler/
+.dev.vars

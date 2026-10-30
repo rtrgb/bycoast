@@ -1,6 +1,6 @@
 #!/bin/sh
-# Monta a pasta dist/ que vai para a Cloudflare Pages: o site sem a pasta midia/
-# (fotos e vídeos ficam no R2; a Pages aceita no máximo 25 MB por arquivo).
+# Monta a pasta dist/ que vai para a Cloudflare Pages: o site e o painel, sem a pasta midia/
+# e sem o trabalhos.json (os dois ficam no R2, onde o painel consegue mexer).
 #
 # Como usar (na pasta do projeto):
 #   sh scripts/build.sh
@@ -9,4 +9,4 @@ cd "$(dirname "$0")/.."
 
 rm -rf dist
 mkdir dist
-cp -R index.html trabalhos.json css js img dist/
+cp -R index.html css js img painel dist/

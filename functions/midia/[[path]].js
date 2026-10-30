@@ -22,10 +22,10 @@ export async function onRequest({ request, env, params }) {
   if (!obj) return new Response('Não encontrado', { status: 404 });
 
   const headers = new Headers();
-  obj.writeHttpMetadata(headers); // tipo do arquivo (video/mp4, image/jpeg...)
+  obj.writeHttpMetadata(headers); // tipo do arquivo (video/mp4, image/jpeg...) e cache, se o painel definiu
   headers.set('etag', obj.httpEtag);
   headers.set('accept-ranges', 'bytes');
-  headers.set('cache-control', 'public, max-age=86400');
+  if (!headers.has('cache-control')) headers.set('cache-control', 'public, max-age=86400');
 
   // sem corpo = o onlyIf bateu: o navegador já tem a versão atual
   if (!('body' in obj)) return new Response(null, { status: 304, headers });

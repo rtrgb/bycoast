@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0c0d0d" />
+    <title>Painel · bycoast</title>
+    <link rel="icon" href="../img/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap"
+        rel="stylesheet" />
+    <!-- ?v=1: mude o número sempre que mexer no CSS ou no JS do painel -->
+    <link rel="stylesheet" href="painel.css?v=1" />
+</head>
+
+<body>
+    <header class="topo">
+        <button class="voltar" id="voltar" hidden>← Trabalhos</button>
+        <p class="marca">bycoast <span>painel</span></p>
+        <a class="ver-site" href="/" target="_blank" rel="noopener">Ver site ↗</a>
+    </header>
+
+    <!-- aviso (erro, sucesso). O painel.js preenche -->
+    <p class="aviso" id="aviso" role="status" hidden></p>
+
+    <main id="conteudo">
+        <p class="carregando">Carregando…</p>
+    </main>
+
+    <!-- barra de publicar: aparece quando tem alteração que ainda não está no site -->
+    <footer class="publicar" id="publicar" hidden>
+        <p id="publicar-texto">Alterações não publicadas</p>
+        <button class="btn btn-principal" id="publicar-btn">Publicar</button>
+    </footer>
+
+    <script src="painel.js?v=1"></script>
+</body>
+
+</html>
