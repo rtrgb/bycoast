@@ -1,5 +1,10 @@
 .DS_Store
+.COMO-ATUALIZAR.md/
 .vscode/
 
 # fotos e vídeos originais (pesados). O site usa as versões leves em midia/
 originais/
+
+# versão para a Cloudflare (gerada pelo scripts/build.sh)
+dist/
+.wrangler/

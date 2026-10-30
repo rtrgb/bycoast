@@ -1,0 +1,10 @@
+# Configuração da Cloudflare Pages (versão de teste em bycoast.pages.dev).
+# O GitHub Pages ignora este arquivo.
+name = "bycoast"
+compatibility_date = "2026-10-01"
+pages_build_output_dir = "dist"
+
+# bucket do R2 com as fotos e vídeos; no código ele se chama env.MIDIA
+[[r2_buckets]]
+binding = "MIDIA"
+bucket_name = "bycoast-midia"
