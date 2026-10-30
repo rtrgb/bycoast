@@ -834,6 +834,30 @@ body.no-scroll {
     transform: scale(0.92);
 }
 
+/* compartilhar + fechar, lado a lado */
+.lightbox-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lightbox-toast {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+    margin-right: 4px;
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+.lightbox-toast.show {
+    opacity: 1;
+    transform: none;
+}
+
 .lightbox-nav {
     position: absolute;
     z-index: 2;

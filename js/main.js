@@ -78,6 +78,8 @@ function contagem(midias) {
 // ========================
 const heroVideoReady = initHeroVideo();
 
+let openFromLink = null; // abre a mídia do link compartilhado (#fx/2), se tiver
+
 const siteReady = fetch('trabalhos.json')
   .then(function (res) { return res.json(); })
   .then(function (works) {
@@ -86,7 +88,7 @@ const siteReady = fetch('trabalhos.json')
     initReveal();
     initPreviews();
     initClients(works);
-    initLightbox(works);
+    openFromLink = initLightbox(works);
     return Promise.all([waitImages(1), heroVideoReady]);
   })
   .catch(function () {
@@ -94,7 +96,10 @@ const siteReady = fetch('trabalhos.json')
       '<p class="note">Não consegui carregar o trabalhos.json. Abra com o Live Server, não direto pelo arquivo.</p>';
   });
 
-runIntro(siteReady);
+// veio por um link compartilhado: abre a mídia assim que a cortina subir
+runIntro(siteReady).then(function () {
+  if (openFromLink) openFromLink();
+});
 
 // espera as primeiras fotos da galeria carregarem (ou darem erro)
 function waitImages(count) {
@@ -113,9 +118,13 @@ function waitImages(count) {
 // O nome aparece, a linha cresce, o contador sobe
 // e, com o site pronto, a tela sobe como uma cortina
 // ========================
+// devolve uma promessa que resolve quando a cortina sobe (sem intro: quando o site carrega)
 function runIntro(ready) {
   const html = document.documentElement;
-  if (!html.classList.contains('intro')) return;
+  if (!html.classList.contains('intro')) return ready;
+
+  let revelado;
+  const fim = new Promise(function (resolve) { revelado = resolve; });
 
   const intro = document.getElementById('intro');
   const pct = document.getElementById('intro-pct');
@@ -144,7 +153,10 @@ function runIntro(ready) {
     html.classList.add('revealed'); // topo do site entra
     document.body.classList.remove('no-scroll');
     setTimeout(function () { intro.remove(); }, 1200);
+    revelado();
   }
+
+  return fim;
 }
 
 // ========================
@@ -442,6 +454,10 @@ function initLightbox(works) {
     counter.innerHTML = '<b>' + pad(current + 1) + '</b> / ' + pad(list.length);
     type.textContent = '▶ ' + (m.duracao || 'vídeo');
     type.hidden = m.tipo !== 'video';
+
+    // o endereço acompanha a mídia aberta (#fx/2), então o link já é o de compartilhar.
+    // replaceState não cria entrada no histórico: o "voltar" do navegador continua igual
+    history.replaceState(null, '', '#' + work.id + '/' + (current + 1));
   }
 
   // fundo: uma camada nova com a mídia desfocada aparece por cima da anterior
@@ -487,11 +503,12 @@ function initLightbox(works) {
 
   // ---------- abrir, trocar, fechar ----------
 
-  function open(index) {
+  // pos: qual mídia abrir (link compartilhado). Sem pos, abre a capa
+  function open(index, pos) {
     work = works[index];
     card = grid.querySelector('.work[data-index="' + index + '"]');
     list = work.midias;
-    current = 0;
+    current = pos > 0 && pos < list.length ? pos : 0;
     const from = cover().getBoundingClientRect();
 
     lightbox.classList.add('active');
@@ -499,10 +516,10 @@ function initLightbox(works) {
     document.body.classList.add('no-scroll'); // trava a página de trás
     card.classList.add('is-source');          // a capa fica vazia: é dali que a foto sai
     buildThumbs();
-    render(list[0]);
+    render(list[current]);
     updateWorkInfo();
     updateMediaInfo();
-    setAmbient(list[0]);
+    setAmbient(list[current]);
     sync();
     wake();
     lightbox.focus({ preventScroll: true }); // teclado (Esc, setas) já funciona
@@ -511,9 +528,14 @@ function initLightbox(works) {
     void lightbox.offsetWidth;
     lightbox.classList.add('open');
 
-    // a capa cresce do lugar dela na galeria até o centro
-    const to = el.getBoundingClientRect();
-    animate(el, [{ transform: rectTransform(to, from) }, { transform: 'none' }], { duration: 500 });
+    if (current === 0) {
+      // a capa cresce do lugar dela na galeria até o centro
+      const to = el.getBoundingClientRect();
+      animate(el, [{ transform: rectTransform(to, from) }, { transform: 'none' }], { duration: 500 });
+    } else {
+      // outra mídia (formato diferente da capa): só aparece
+      animate(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 400 });
+    }
   }
 
   // troca de mídia. dir: 1 = próxima (entra pela direita), -1 = anterior
@@ -553,6 +575,7 @@ function initLightbox(works) {
     clearTimeout(idleTimer);
     lightbox.classList.remove('open', 'idle', 'zoomed');
     ambient.style.opacity = '';
+    history.replaceState(null, '', location.pathname + location.search); // tira o #fx/2
 
     const source = card;
     const target = cover().getBoundingClientRect();
@@ -792,6 +815,24 @@ function initLightbox(works) {
 
   document.getElementById('lightbox-close').addEventListener('click', close);
 
+  // compartilhar: no celular abre o menu do sistema (WhatsApp, Instagram...);
+  // onde não tem esse menu, copia o link e avisa
+  const toast = document.getElementById('lightbox-toast');
+  let toastTimer = null;
+
+  document.getElementById('lightbox-share').addEventListener('click', function () {
+    const url = location.href;
+    if (navigator.share) {
+      navigator.share({ title: work.titulo + ' · bycoast', url: url }).catch(function () {});
+      return;
+    }
+    navigator.clipboard.writeText(url).then(function () {
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2000);
+    });
+  });
+
   thumbs.addEventListener('click', function (e) {
     const thumb = e.target.closest('.thumb');
     if (!thumb) return;
@@ -806,6 +847,18 @@ function initLightbox(works) {
     if (e.key === 'ArrowLeft') show(current - 1, -1);
     if (e.key === 'ArrowRight') show(current + 1, 1);
   });
+
+  // link compartilhado: #fx/2 = trabalho "fx", 2ª mídia
+  return function () {
+    const match = location.hash.match(/^#([^/]+)\/(\d+)$/);
+    if (!match) return;
+    const id = decodeURIComponent(match[1]);
+    const index = works.findIndex(function (w) { return w.id === id; });
+    if (index < 0) return;
+    // rola até o card, pra ao fechar a pessoa já estar na galeria
+    grid.querySelector('.work[data-index="' + index + '"]').scrollIntoView({ block: 'center', behavior: 'instant' });
+    open(index, Number(match[2]) - 1);
+  };
 }
 
 // ========================
