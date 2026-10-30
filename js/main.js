@@ -835,7 +835,7 @@ form.addEventListener('submit', function (e) {
     'Olá! Vim pelo site da bycoast.\n\n' +
     'Nome: ' + value('nome') + '\n' +
     'Serviço: ' + value('servico') + '\n' +
-    'Cidade: ' + value('cidade') + '\n' +
+    'Cidade: ' + (value('cidade') || 'não informada') + '\n' +
     'Data: ' + data + '\n\n' +
     value('msg');
 
