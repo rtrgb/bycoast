@@ -8,3 +8,8 @@ pages_build_output_dir = "dist"
 [[r2_buckets]]
 binding = "MIDIA"
 bucket_name = "bycoast-midia"
+
+# login do painel (Cloudflare Access). Não são segredos: só dizem de quem aceitar o "crachá"
+[vars]
+ACCESS_TEAM = "https://bycoast.cloudflareaccess.com"
+ACCESS_AUD = "51fff1f9dab17445958b62e698e036162f5bf62ed54880d9b68be3fc39d19f23"
