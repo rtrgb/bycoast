@@ -1,5 +1,6 @@
 .DS_Store
-.COMO-ATUALIZAR.md/
+# manual de uso: fica só no computador, não vai pro GitHub
+COMO-ATUALIZAR.md
 .vscode/
 
 # fotos e vídeos ficam no R2 da Cloudflare (o painel envia); estas pastas são só cópias locais
