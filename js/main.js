@@ -80,9 +80,20 @@ const heroVideoReady = initHeroVideo();
 
 let openFromLink = null; // abre a mídia do link compartilhado (#fx/2), se tiver
 
-const siteReady = fetch('trabalhos.json')
+// a lista de trabalhos e as fotos/vídeos ficam no R2 da Cloudflare (o painel mexe lá).
+// No Live Server do VS Code eles não existem na pasta, então buscamos do site no ar
+const DADOS = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'https://bycoast.com.br/' : '';
+
+const siteReady = fetch(DADOS + 'trabalhos.json')
   .then(function (res) { return res.json(); })
   .then(function (works) {
+    if (DADOS) {
+      works.forEach(function (work) {
+        work.midias.forEach(function (m) {
+          ['src', 'poster', 'thumb', 'previa'].forEach(function (k) { if (m[k]) m[k] = DADOS + m[k]; });
+        });
+      });
+    }
     renderGrid(works);
     initFilters();
     initReveal();
@@ -93,7 +104,7 @@ const siteReady = fetch('trabalhos.json')
   })
   .catch(function () {
     document.querySelector('.grid').innerHTML =
-      '<p class="note">Não consegui carregar o trabalhos.json. Abra com o Live Server, não direto pelo arquivo.</p>';
+      '<p class="note">Não consegui carregar os trabalhos. No computador, abra com o Live Server (não direto pelo arquivo).</p>';
   });
 
 // veio por um link compartilhado: abre a mídia assim que a cortina subir

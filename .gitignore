@@ -2,8 +2,9 @@
 .COMO-ATUALIZAR.md/
 .vscode/
 
-# fotos e vídeos originais (pesados). O site usa as versões leves em midia/
+# fotos e vídeos ficam no R2 da Cloudflare (o painel envia); estas pastas são só cópias locais
 originais/
+midia/
 
 # versão para a Cloudflare (gerada pelo scripts/build.sh)
 dist/

@@ -11,6 +11,7 @@ export async function onRequestGet({ request, env }) {
   const headers = new Headers({
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-cache', // o navegador sempre pergunta se mudou (resposta rápida se não mudou)
+    'access-control-allow-origin': '*', // deixa o Live Server do VS Code ler a lista (é pública mesmo)
     etag: obj.httpEtag
   });
   if (!('body' in obj)) return new Response(null, { status: 304, headers });

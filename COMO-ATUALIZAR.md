@@ -1,117 +1,86 @@
 # Como atualizar o site
 
-## Rodar no VS Code
+O site fica em **https://bycoast.com.br**, hospedado na Cloudflare.
+São duas coisas separadas:
 
-1. Abra a pasta no VS Code.
-2. Instale a extensão **Live Server** (Ritwick Dey).
-3. Clique com o botão direito no `index.html` e escolha **Open with Live Server**.
+| O quê | Onde | Quem |
+|---|---|---|
+| Trabalhos, fotos e vídeos | **bycoast.com.br/painel** | o dono do site, pelo celular |
+| Código (visual, textos, funções) | esta pasta + `sh scripts/publicar.sh` | quem programa |
 
-Abrir o `index.html` direto (file://) não funciona, porque o navegador bloqueia o `fetch('trabalhos.json')`.
+## Conteúdo: pelo painel
 
-## Estrutura
+1. Abra **bycoast.com.br/painel** e entre com o e-mail (chega um código).
+2. Crie um trabalho, ou toque num existente para editar.
+3. **+ Adicionar** envia fotos e vídeos. A primeira mídia é a **capa**; as setas mudam a ordem.
+4. Aperte **Publicar**. O site atualiza na hora.
 
-```
-index.html              estrutura da página
-css/style.css           visual (cores e fontes nas variáveis do topo)
-js/main.js              intro, galeria, filtros, lightbox, formulário → WhatsApp
-trabalhos.json          lista de trabalhos (cada um com suas fotos e vídeos)
-midia/                  fotos e vídeos otimizados (gerados pelo script)
-scripts/atualizar.mjs   transforma os originais em versões leves pro site
-originais/              arquivos brutos do Drive (NÃO vai pro GitHub)
-```
-
-## Adicionar trabalhos novos
-
-### Uma vez só: preparar o Mac
-
-```sh
-brew install ffmpeg      # pra processar vídeos (fotos já funcionam sem nada)
-```
-
-### Toda vez que chegar material novo
-
-1. **Baixe do Drive** e coloque em `originais/`, **uma pasta por trabalho**.
-   O nome da pasta vira o título (dá pra mudar depois).
-
-   ```
-   originais/
-     Reforma lancha 26 pés/
-       IMG_1234.HEIC
-       IMG_1240.MOV
-     Retífica motor V8/
-       ...
-   ```
-
-2. **Rode o script** no terminal do VS Code:
-
-   ```sh
-   node scripts/atualizar.mjs
-   ```
-
-   Ele gera as versões leves em `midia/` e coloca o trabalho no `trabalhos.json`.
-   Arquivos que já foram processados não são refeitos, então pode rodar quantas vezes quiser.
-
-3. **Complete o `trabalhos.json`** (o script avisa o que falta):
-
-   ```json
-   {
-     "id": "reforma-lancha-26-pes",
-     "titulo": "Reforma de lancha 26 pés",
-     "categoria": "nautica",
-     "local": "Itajaí",
-     "cliente": "Marina Tal",
-     "midias": [ ... ]
-   }
-   ```
-
-   - `categoria`: `automotivo`, `nautica`, `eventos`, `gastronomia` ou `negocios`
-     (a lista fica em `CATEGORIAS`, no topo do `js/main.js`. Pra criar outra, é só adicionar lá)
-   - `cliente`: opcional. Os nomes preenchidos aparecem na seção "Quem já atendeu"
-   - `midias`: **a primeira é a capa** do card. Pra trocar a capa, mova a linha pra cima
-   - **A ordem dos trabalhos no arquivo é a ordem na galeria** (o script coloca os novos no topo)
-
-4. **Confira** no Live Server.
-
-5. **Publique**:
-
-   ```sh
-   git add .
-   git commit -m "Adiciona trabalho: Reforma de lancha 26 pés"
-   git push
-   ```
-
-   Em 1 ou 2 minutos o site no ar atualiza.
-
-### Tirar um trabalho ou uma mídia
-
-Apague o bloco (ou a linha) no `trabalhos.json`. Se quiser, apague também a pasta em `midia/`.
+Nada muda no site antes de apertar **Publicar**. Apagar uma mídia ou um trabalho e publicar apaga os arquivos de vez.
 
 ### Vídeos
 
-- O ideal é vídeo curto (até uns 60s). O script comprime e avisa se ainda ficar acima de 50 MB.
-- Pra cada vídeo ele gera: o vídeo, uma **prévia de 4s sem som** (toca na galeria), a **capa** e a miniatura.
-- A duração (`"duracao": "0:21"`) é preenchida sozinha.
-- A capa e a prévia saem de 30% do vídeo (o começo costuma ser tela preta ou título).
-  Pra escolher outro momento, coloque `"inicio": 12` (em segundos) naquele vídeo e rode o script de novo.
+- Exporte em **1080p, MP4 (H.264)**, o padrão do CapCut e do Premiere. O vídeo vai como veio, sem perder qualidade.
+- O painel recusa 4K e HEVC (alguns navegadores não tocam) e explica como exportar.
+- A capa do vídeo sai de 30% da duração (o começo costuma ser tela preta ou título).
 
-## Configurar
+### Quem pode entrar
+
+O login é do **Cloudflare Access**: Zero Trust → Access → Applications → *Painel bycoast* → policy `email-login`.
+Para liberar outra pessoa, coloque o e-mail dela nessa policy.
+
+## Código: nesta pasta
+
+### Testar no VS Code
+
+1. Instale a extensão **Live Server** (Ritwick Dey).
+2. Clique com o botão direito no `index.html` → **Open with Live Server**.
+
+No computador, a lista de trabalhos e as fotos vêm do site no ar (bycoast.com.br), então o que aparece é o conteúdo real.
+O painel só funciona no site no ar.
+
+### Publicar
+
+```sh
+git add .
+git commit -m "O que mudou"
+git push                  # guarda no GitHub (backup e histórico)
+sh scripts/publicar.sh    # coloca no ar na Cloudflare
+```
+
+Mexeu no CSS ou no JS? Troque o número `?v=` nos links do `index.html` (ou do `painel/index.html`),
+senão o celular pode juntar o HTML novo com o CSS antigo que ficou guardado.
+
+### Estrutura
+
+```
+index.html                  estrutura da página
+css/style.css               visual (cores e fontes nas variáveis do topo)
+js/main.js                  intro, galeria, filtros, lightbox, compartilhar, formulário → WhatsApp
+painel/                     tela do painel
+functions/                  servidor na Cloudflare:
+  midia/[[path]].js           entrega fotos e vídeos do R2
+  trabalhos.json.js           entrega a lista de trabalhos do R2
+  api/                        o que o painel usa (login, salvar, enviar arquivos)
+wrangler.toml               configuração da Cloudflare (R2 e login)
+scripts/build.sh            monta a pasta dist/ que vai para a Cloudflare
+scripts/publicar.sh         build + publicar
+```
+
+Fotos, vídeos e o `trabalhos.json` ficam no **R2** (Cloudflare → R2 → `bycoast-midia`), não no GitHub.
+
+### Configurar
 
 No topo do `js/main.js`:
 
 - `WHATSAPP`: número só com dígitos, com 55 e DDD.
 - `HERO_VIDEO`: vídeo do fundo do topo (ex.: `'midia/hero.mp4'`). Curto, sem som, em loop. Vazio = topo só com texto.
-- `CATEGORIAS`: categorias e o nome que aparece no site. Os filtros da galeria saem daqui, na mesma ordem.
+- `CATEGORIAS`: categorias e o nome que aparece no site. Os filtros saem daqui, na mesma ordem.
+  Ao mudar, mude também em `painel/painel.js` e `functions/_lib/trabalhos.js`.
 
 Instagram: link no footer do `index.html`.
 
 ## Próximos passos
 
-- [x] Número do WhatsApp
-- [x] @ do Instagram (by.coast_)
-- [x] Publicar no GitHub Pages
-- [x] Organizar por trabalho + script de atualização
-- [x] Trocar os exemplos (picsum) pelos trabalhos reais
-- [ ] Preencher as cidades ("local") no trabalhos.json
 - [ ] Vídeo do topo (HERO_VIDEO)
-- [x] Foto real na prévia do link (og:image no index.html)
-- [ ] Painel para o dono subir fotos sem mexer no código
+- [ ] `www.bycoast.com.br` → `bycoast.com.br` (Cloudflare → Rules → Redirect Rules → modelo "Redirect from WWW to root")
+- [ ] Publicar sozinho a cada `git push` (ligar a Cloudflare Pages ao GitHub)
