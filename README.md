@@ -2,5 +2,5 @@
 
 Fotografia, vídeo, edição e postagem em Santa Catarina.
 
-**Site:** https://rtrgb.github.io/bycoast/
+**Site:** https://bycoast.com.br/
 **Instagram:** [@by.coast_](https://instagram.com/by.coast_)
