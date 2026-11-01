@@ -1,0 +1,28 @@
+# Publica o site na Cloudflare Pages a cada push.
+#   push na main        -> site oficial (bycoast.com.br)
+#   push em outra branch -> prévia em <branch>.bycoast.pages.dev
+# Fotos, vídeos e a lista de trabalhos não passam por aqui: isso é pelo painel.
+# O token fica em Settings > Secrets and variables > Actions (CLOUDFLARE_API_TOKEN), nunca no código.
+name: Publicar
+
+on:
+  push:
+  workflow_dispatch:
+
+# se vierem dois pushes seguidos na mesma branch, só o último publica
+concurrency:
+  group: publicar-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Montar dist/
+        run: sh scripts/build.sh
+      - name: Enviar para a Cloudflare
+        run: npx wrangler@4.156.0 pages deploy --branch "${{ github.ref_name }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 37ba281fbfb15f82b40f9b3df33493b0
