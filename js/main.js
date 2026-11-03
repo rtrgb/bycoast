@@ -76,13 +76,13 @@ function contagem(midias) {
 // ========================
 // CARREGAR TRABALHOS DO JSON
 // ========================
-const heroVideoReady = initHeroVideo();
-
-let openFromLink = null; // abre a mídia do link compartilhado (#fx/2), se tiver
-
 // a lista de trabalhos e as fotos/vídeos ficam no R2 da Cloudflare (o painel mexe lá).
 // No Live Server do VS Code eles não existem na pasta, então buscamos do site no ar
 const DADOS = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'https://bycoast.com.br/' : '';
+
+const heroVideoReady = initHeroVideo();
+
+let openFromLink = null; // abre a mídia do link compartilhado (#fx/2), se tiver
 
 const siteReady = fetch(DADOS + 'trabalhos.json')
   .then(function (res) { return res.json(); })
