@@ -8,7 +8,7 @@ const WHATSAPP = '5547992019065';
 
 // Vídeo que roda no fundo do topo (curto, sem som, em loop). Ex.: 'midia/hero.mp4'
 // Vazio = topo só com texto
-const HERO_VIDEO = '';
+const HERO_VIDEO = 'midia/hero-teste.mp4';
 
 // categorias do trabalhos.json e o nome que aparece no site (a ordem aqui é a ordem dos filtros)
 const CATEGORIAS = {
@@ -179,7 +179,7 @@ function initHeroVideo() {
   const hero = document.querySelector('.hero');
   const video = document.createElement('video');
   video.className = 'hero-video';
-  video.src = HERO_VIDEO;
+  video.src = DADOS + HERO_VIDEO; // no Live Server vem do site no ar, como o resto da mídia
   video.muted = true;       // sem som, senão o navegador não deixa tocar sozinho
   video.loop = true;
   video.playsInline = true;
