@@ -911,6 +911,87 @@ textarea {
 }
 
 /* ========================
+   CONTATO: foto ao lado do formulário
+   Computador: foto na metade esquerda, na altura da tela. Celular: faixa em cima
+======================== */
+section.contato {
+    max-width: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 100vh;
+    min-height: 100svh;
+    border-top: 1px solid var(--line);
+}
+
+.contato-foto {
+    position: relative;
+    overflow: hidden;
+    background: var(--line);
+}
+
+.contato-foto img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 53% 30%; /* centraliza no rosto */
+    filter: grayscale(1) contrast(1.08) brightness(0.92);
+}
+
+.contato-corpo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 96px max(var(--side-r), 6vw) 96px max(var(--side-l), 6vw);
+}
+
+section h2.contato-titulo {
+    font-family: var(--sans);
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    text-transform: none;
+    color: var(--text);
+    margin-bottom: 24px;
+}
+
+.contato-intro {
+    max-width: 44ch;
+    color: var(--muted);
+    margin-bottom: 48px;
+}
+
+.contato #form {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+}
+
+/* tela larga: o formulário volta a ter duas colunas */
+@media (min-width: 1280px) {
+    .contato #form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    section.contato {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+    }
+
+    .contato-foto {
+        height: min(64vw, 440px);
+    }
+
+    .contato-corpo {
+        padding: 56px var(--side-r) 72px var(--side-l);
+    }
+}
+
+/* ========================
    LIGHTBOX (foto ampliada)
 ======================== */
 #lightbox {

@@ -22,7 +22,7 @@
         rel="stylesheet" />
     <!-- ?v=3: mude o número sempre que mexer no CSS ou no JS,
          senão o celular pode juntar o HTML novo com o CSS antigo que ficou guardado -->
-    <link rel="stylesheet" href="css/style.css?v=9" />
+    <link rel="stylesheet" href="css/style.css?v=10" />
 
     <!-- liga a intro antes da página aparecer (assim o site não pisca por baixo).
          Não aparece pra quem pediu "reduzir movimento" no sistema -->
@@ -119,9 +119,15 @@
     </section>
 
     <!-- ORÇAMENTO -->
-    <section id="orcamento">
-        <h2>Orçamento</h2>
-        <p class="lead">Me conte o que você quer registrar e acertamos os detalhes juntos.</p>
+    <section id="orcamento" class="contato">
+        <!-- foto do Diogo (fica preto e branco pelo CSS). Pra trocar: substitua img/contato.jpg -->
+        <div class="contato-foto">
+            <img src="img/contato.jpg" alt="Diogo, da bycoast, num trabalho de reforma de embarcação" loading="lazy" width="1600" height="898" />
+        </div>
+
+        <div class="contato-corpo">
+        <h2 class="contato-titulo">Solicite um orçamento</h2>
+        <p class="contato-intro">Sou o Diogo, responsável pela captação e edição da bycoast. Me conte o que você quer registrar e acertamos os detalhes juntos.</p>
 
         <form id="form" novalidate>
             <div class="field">
@@ -154,6 +160,7 @@
                 <span class="privacy">Seus dados vão direto para o WhatsApp. Nada fica salvo no site.</span>
             </div>
         </form>
+        </div>
     </section>
 
     <!-- LIGHTBOX (foto ampliada)
