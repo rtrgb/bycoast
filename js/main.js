@@ -8,7 +8,7 @@ const WHATSAPP = '5547992019065';
 
 // Vídeo que roda no fundo do topo (curto, sem som, em loop). Ex.: 'midia/hero.mp4'
 // Vazio = topo só com texto
-const HERO_VIDEO = 'midia/hero-teste.mp4';
+const HERO_VIDEO = 'midia/hero.mp4';
 
 // categorias do trabalhos.json e o nome que aparece no site (a ordem aqui é a ordem dos filtros)
 const CATEGORIAS = {
