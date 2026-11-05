@@ -1,0 +1,104 @@
+/* ========================
+   TESTE DE FONTES (só na branch "fontes", não vai pro site oficial)
+   O js/fontes-teste.js troca o data-fonte no <html>
+======================== */
+
+/* 1 · Instrument Sans + Instrument Serif (itálico nos destaques) */
+:root[data-fonte="1"] {
+    --sans: 'Instrument Sans', system-ui, sans-serif;
+    --mono: 'Instrument Sans', system-ui, sans-serif;
+}
+:root[data-fonte="1"] :is(.lead, .depoimento p, .obrigado-titulo) {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+:root[data-fonte="1"] .lead { font-size: 1.75rem; }
+
+/* 2 · Archivo + IBM Plex Mono (título mais estreito, clima de créditos de filme) */
+:root[data-fonte="2"] {
+    --sans: 'Archivo', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+:root[data-fonte="2"] :is(.hero h1, .intro-mark) {
+    font-stretch: 80%;
+    letter-spacing: -0.03em;
+}
+
+/* 3 · Hanken Grotesk + DM Mono (parecido com o atual) */
+:root[data-fonte="3"] {
+    --sans: 'Hanken Grotesk', system-ui, sans-serif;
+    --mono: 'DM Mono', ui-monospace, monospace;
+}
+
+/* 4 · Schibsted Grotesk + JetBrains Mono */
+:root[data-fonte="4"] {
+    --sans: 'Schibsted Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* 5 · Bodoni Moda nos títulos + Jost no texto e rótulos */
+:root[data-fonte="5"] {
+    --sans: 'Jost', system-ui, sans-serif;
+    --mono: 'Jost', system-ui, sans-serif;
+}
+:root[data-fonte="5"] :is(.hero h1, .intro-mark, .lead, .service h3, .depoimento p, .clients li, .lightbox-title, .obrigado-titulo) {
+    font-family: 'Bodoni Moda', serif;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+}
+:root[data-fonte="5"] :is(section h2, label, .hero-meta) {
+    letter-spacing: 0.16em;
+}
+
+/* 6 · Familjen Grotesk + Space Mono */
+:root[data-fonte="6"] {
+    --sans: 'Familjen Grotesk', system-ui, sans-serif;
+    --mono: 'Space Mono', ui-monospace, monospace;
+}
+
+/* ---------- seletor flutuante ---------- */
+.fontes-teste {
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: calc(100% - 32px);
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(232, 232, 229, 0.96);
+    color: #0c0d0d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    font: 500 13px/1.2 system-ui, -apple-system, sans-serif;
+}
+.fontes-teste button {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+.fontes-teste button:hover { background: rgba(0, 0, 0, 0.08); }
+.fontes-teste span {
+    padding: 0 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fontes-teste small {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.6;
+}
