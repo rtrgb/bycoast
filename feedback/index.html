@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap"
         rel="stylesheet" />
     <!-- ?v=7: o mesmo número do index.html -->
-    <link rel="stylesheet" href="../css/style.css?v=8" />
+    <link rel="stylesheet" href="../css/style.css?v=9" />
 </head>
 
 <body class="pagina-feedback">
@@ -62,15 +62,20 @@
                 </div>
             </form>
 
-            <div class="feedback-ok" id="feedback-ok" hidden>
-                <p class="lead">Obrigado!</p>
-                <p class="note">Recebemos sua avaliação. Ela aparece no site assim que for revisada.</p>
-                <a class="btn" href="/">Ver o site</a>
-            </div>
         </section>
     </main>
 
-    <script src="feedback.js?v=2"></script>
+    <!-- popup de agradecimento (abre depois de enviar) -->
+    <dialog class="obrigado" id="obrigado" aria-labelledby="obrigado-titulo">
+        <p class="obrigado-titulo" id="obrigado-titulo">Obrigado!</p>
+        <p class="obrigado-texto">Recebemos sua avaliação. Ela aparece no site assim que for revisada.</p>
+        <div class="obrigado-acoes">
+            <a class="btn" href="/">Ver o site</a>
+            <button class="obrigado-fechar" id="obrigado-fechar">Fechar</button>
+        </div>
+    </dialog>
+
+    <script src="feedback.js?v=3"></script>
 </body>
 
 </html>

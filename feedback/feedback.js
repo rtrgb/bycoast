@@ -8,6 +8,7 @@ const erro = document.getElementById('form-error');
 const botao = document.getElementById('enviar');
 const texto = document.getElementById('texto');
 const contador = document.getElementById('contador');
+const obrigado = document.getElementById('obrigado');
 const aberto = Date.now(); // robô envia na hora; gente leva alguns segundos
 
 texto.addEventListener('input', function () {
@@ -41,9 +42,9 @@ form.addEventListener('submit', async function (e) {
     const dados = await res.json().catch(function () { return {}; });
     if (!res.ok) throw new Error(dados.erro || 'Não consegui enviar. Tente de novo.');
 
-    form.hidden = true;
-    document.getElementById('feedback-ok').hidden = false;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    form.reset();
+    contador.textContent = '0 / 500';
+    obrigado.showModal();
   } catch (err) {
     falhar(err.message.indexOf('fetch') >= 0 ? 'Sem conexão. Tente de novo.' : err.message);
   }
@@ -55,3 +56,9 @@ function falhar(mensagem, campo) {
   erro.textContent = mensagem;
   if (campo) document.getElementById(campo).focus();
 }
+
+// fechar o popup: botão, tecla Esc (o navegador já faz) ou toque fora dele
+document.getElementById('obrigado-fechar').addEventListener('click', function () { obrigado.close(); });
+obrigado.addEventListener('click', function (e) {
+  if (e.target === obrigado) obrigado.close();
+});
