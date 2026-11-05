@@ -484,3 +484,74 @@ select:focus {
     font-size: 0.875rem;
     color: var(--muted);
 }
+
+/* ---------- depoimentos ---------- */
+.dep-titulo {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+}
+
+.dep-sub {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 28px 0 10px;
+}
+
+.dep-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+}
+
+.dep-link code {
+    font-size: 0.875rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deps {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+}
+
+.dep {
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+}
+
+.dep-texto {
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+.dep-autor {
+    margin-top: 10px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+}
+
+.dep-autor b {
+    font-weight: 500;
+    color: var(--text);
+}
+
+.dep-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.dep-acoes .apagar {
+    margin-left: auto;
+}
