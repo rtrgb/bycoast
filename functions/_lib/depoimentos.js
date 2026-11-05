@@ -37,7 +37,7 @@ export function validarLista(lista) {
   const ids = new Set();
   const deps = [];
   for (const d of lista) {
-    if (!d || !ID.test(d.id) || ids.has(d.id)) return { erro: 'Depoimento inválido.' };
+    if (!d || !ID.test(d.id) || ids.has(d.id)) return { erro: 'Avaliação inválida.' };
     ids.add(d.id);
     const { dep, erro } = limpar(d);
     if (erro) return { erro };

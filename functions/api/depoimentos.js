@@ -13,7 +13,7 @@ export async function onRequestGet({ env }) {
 // { acao: 'aprovar' | 'recusar', id }
 export async function onRequestPost({ request, env }) {
   const corpo = await request.json().catch(function () { return null; });
-  if (!corpo || !ID.test(corpo.id)) return erro(400, 'Depoimento inválido.');
+  if (!corpo || !ID.test(corpo.id)) return erro(400, 'Avaliação inválida.');
   const chave = PASTA_PENDENTES + corpo.id + '.json';
 
   if (corpo.acao === 'recusar') {
@@ -23,14 +23,14 @@ export async function onRequestPost({ request, env }) {
 
   if (corpo.acao !== 'aprovar') return erro(400, 'Ação inválida.');
   const obj = await env.MIDIA.get(chave);
-  if (!obj) return erro(404, 'Esse depoimento já foi aprovado ou recusado. Recarregue a página.');
+  if (!obj) return erro(404, 'Essa avaliação já foi aprovada ou recusada. Recarregue a página.');
   const dep = await obj.json();
 
   // o aprovado entra no começo da lista (mais recente primeiro)
   const atual = await lerAprovados(env);
   const lista = [dep].concat(atual.lista.filter(function (d) { return d.id !== dep.id; }));
   const salvo = await salvar(env, lista, atual.versao);
-  if (!salvo) return erro(409, 'Os depoimentos mudaram em outro lugar. Recarregue a página.');
+  if (!salvo) return erro(409, 'As avaliações mudaram em outro lugar. Recarregue a página.');
   await env.MIDIA.delete(chave);
   return Response.json({ versao: salvo.etag });
 }
@@ -43,7 +43,7 @@ export async function onRequestPut({ request, env }) {
   if (problema) return erro(400, problema);
 
   const salvo = await salvar(env, deps, corpo.versao);
-  if (!salvo) return erro(409, 'Os depoimentos mudaram em outro lugar. Recarregue a página.');
+  if (!salvo) return erro(409, 'As avaliações mudaram em outro lugar. Recarregue a página.');
   return Response.json({ versao: salvo.etag });
 }
 

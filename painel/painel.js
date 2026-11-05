@@ -256,7 +256,7 @@ function desenharDepoimentos() {
 
   const n = deps.aprovados.length;
   caixa.innerHTML =
-    '<h1 class="dep-titulo">Depoimentos</h1>' +
+    '<h1 class="dep-titulo">Avaliações</h1>' +
     '<p class="dica">Mande este link pro cliente depois do trabalho. O que ele escrever aparece aqui primeiro, e só vai pro site se você aprovar.</p>' +
     '<div class="dep-link"><code>bycoast.com.br/feedback</code><button class="btn" data-dep-copiar>Copiar link</button></div>' +
 
@@ -278,7 +278,7 @@ function desenharDepoimentos() {
             '<button class="mini" data-dep-mover="' + i + '" data-dir="1" aria-label="Descer"' + (i === n - 1 ? ' disabled' : '') + '>↓</button>' +
             '<button class="mini apagar" data-dep-tirar="' + i + '" aria-label="Tirar do site">✕</button>');
         }).join('') + '</ul>'
-      : '<p class="vazio">Nenhum depoimento no site ainda.</p>');
+      : '<p class="vazio">Nenhuma avaliação no site ainda.</p>');
 }
 
 // "2026-11-05" → "05/11/2026"
@@ -326,8 +326,8 @@ conteudo.addEventListener('click', function (e) {
   if (d.depAprovar) acaoDepoimento(function () { return post('aprovar', d.depAprovar); }, 'Aprovado! Já está no site.');
 
   if (d.depRecusar) {
-    if (!confirm('Recusar este depoimento? Ele é apagado e não dá para desfazer.')) { alvo.disabled = false; return; }
-    acaoDepoimento(function () { return post('recusar', d.depRecusar); }, 'Depoimento recusado.');
+    if (!confirm('Recusar esta avaliação? Ela é apagada e não dá para desfazer.')) { alvo.disabled = false; return; }
+    acaoDepoimento(function () { return post('recusar', d.depRecusar); }, 'Avaliação recusada.');
   }
 
   if (d.depMover) {
@@ -338,7 +338,7 @@ conteudo.addEventListener('click', function (e) {
   }
 
   if (d.depTirar) {
-    if (!confirm('Tirar este depoimento do site? Ele é apagado e não dá para desfazer.')) { alvo.disabled = false; return; }
+    if (!confirm('Tirar esta avaliação do site? Ela é apagada e não dá para desfazer.')) { alvo.disabled = false; return; }
     const lista = deps.aprovados.slice();
     lista.splice(Number(d.depTirar), 1);
     acaoDepoimento(function () { return salvarAprovados(lista); }, 'Tirado do site.');

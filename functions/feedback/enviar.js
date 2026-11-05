@@ -22,7 +22,7 @@ export async function onRequestPost({ request, env }) {
 
   const pendentes = await env.MIDIA.list({ prefix: PASTA_PENDENTES, limit: MAX_PENDENTES });
   if (pendentes.objects.length >= MAX_PENDENTES) {
-    return erro(429, 'Recebemos muitos depoimentos agora. Tente de novo mais tarde ou mande pelo WhatsApp.');
+    return erro(429, 'Recebemos muitas avaliações agora. Tente de novo mais tarde ou mande pelo WhatsApp.');
   }
 
   const id = novoId();

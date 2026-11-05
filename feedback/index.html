@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <!-- página que o Diogo manda pro cliente depois do trabalho: fora do Google e do menu -->
     <meta name="robots" content="noindex" />
-    <title>Depoimento · bycoast</title>
-    <meta name="description" content="Conte como foi trabalhar com a bycoast." />
+    <title>Avaliação · bycoast</title>
+    <meta name="description" content="Avalie o trabalho da bycoast." />
     <meta property="og:title" content="Como foi trabalhar com a bycoast?" />
-    <meta property="og:description" content="Leva um minuto. Seu depoimento ajuda outros negócios a conhecerem o trabalho." />
+    <meta property="og:description" content="Leva um minuto. Sua avaliação ajuda outros negócios a conhecerem o trabalho." />
     <meta property="og:image" content="https://bycoast.com.br/midia/brava-drinks/01-brava-drinks.jpg" />
     <link rel="icon" href="../img/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap"
         rel="stylesheet" />
     <!-- ?v=7: o mesmo número do index.html -->
-    <link rel="stylesheet" href="../css/style.css?v=7" />
+    <link rel="stylesheet" href="../css/style.css?v=8" />
 </head>
 
 <body class="pagina-feedback">
@@ -27,7 +27,7 @@
 
     <main>
         <section>
-            <h2>Depoimento</h2>
+            <h2>Avaliação</h2>
             <p class="lead">Como foi trabalhar com a bycoast?</p>
 
             <form id="feedback" novalidate>
@@ -40,7 +40,7 @@
                     <input id="negocio" name="negocio" autocomplete="organization" maxlength="60" placeholder="Opcional. Ex.: Storm Barbearia" />
                 </div>
                 <div class="field full">
-                    <label for="texto">Depoimento <span class="contador" id="contador">0 / 500</span></label>
+                    <label for="texto">Avaliação <span class="contador" id="contador">0 / 500</span></label>
                     <textarea id="texto" name="texto" rows="5" maxlength="500" placeholder="O que achou do resultado, do atendimento, do que mudou depois…"></textarea>
                 </div>
 
@@ -52,25 +52,25 @@
 
                 <label class="check full">
                     <input type="checkbox" id="autorizo" />
-                    <span>Autorizo a bycoast a publicar meu nome e este depoimento no site.</span>
+                    <span>Autorizo a bycoast a publicar meu nome e esta avaliação no site.</span>
                 </label>
 
                 <p class="form-error full" id="form-error" role="alert"></p>
                 <div class="full form-actions">
-                    <button type="submit" class="btn" id="enviar">Enviar depoimento</button>
-                    <span class="privacy">Ele aparece no site depois de revisado.</span>
+                    <button type="submit" class="btn" id="enviar">Enviar avaliação</button>
+                    <span class="privacy">Ela aparece no site depois de revisada.</span>
                 </div>
             </form>
 
             <div class="feedback-ok" id="feedback-ok" hidden>
                 <p class="lead">Obrigado!</p>
-                <p class="note">Recebemos seu depoimento. Ele aparece no site assim que for revisado.</p>
+                <p class="note">Recebemos sua avaliação. Ela aparece no site assim que for revisada.</p>
                 <a class="btn" href="/">Ver o site</a>
             </div>
         </section>
     </main>
 
-    <script src="feedback.js?v=1"></script>
+    <script src="feedback.js?v=2"></script>
 </body>
 
 </html>

@@ -48,7 +48,7 @@ form.addEventListener('submit', async function (e) {
     falhar(err.message.indexOf('fetch') >= 0 ? 'Sem conexão. Tente de novo.' : err.message);
   }
   botao.disabled = false;
-  botao.textContent = 'Enviar depoimento';
+  botao.textContent = 'Enviar avaliação';
 });
 
 function falhar(mensagem, campo) {
