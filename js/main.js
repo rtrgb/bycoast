@@ -81,6 +81,7 @@ function contagem(midias) {
 const DADOS = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'https://bycoast.com.br/' : '';
 
 const heroVideoReady = initHeroVideo();
+initDepoimentos(); // não segura a intro: aparece quando chegar
 
 let openFromLink = null; // abre a mídia do link compartilhado (#fx/2), se tiver
 
@@ -382,6 +383,75 @@ function initClients(works) {
   document.getElementById('clients-track').innerHTML =
     '<ul>' + list + '</ul><ul aria-hidden="true">' + list + '</ul>';
   document.getElementById('clientes').hidden = false;
+}
+
+// ========================
+// O QUE DIZEM (depoimentos aprovados no painel)
+// Um por vez: troca sozinho a cada 7 s, pausa com o mouse em cima,
+// e dá pra passar com as setas ou arrastando no celular
+// ========================
+function initDepoimentos() {
+  fetch(DADOS + 'depoimentos.json')
+    .then(function (res) { return res.ok ? res.json() : []; })
+    .then(function (deps) {
+      if (!Array.isArray(deps) || !deps.length) return; // nenhum aprovado: seção escondida
+
+      const lista = document.getElementById('depoimentos-lista');
+      lista.innerHTML = deps.map(function (d, i) {
+        return (
+          '<blockquote class="depoimento' + (i === 0 ? ' ativo' : '') + '"' + (i ? ' aria-hidden="true"' : '') + '>' +
+          '<p>&ldquo;' + esc(d.texto) + '&rdquo;</p>' +
+          '<div class="dep-autor"><b>' + esc(d.nome) + '</b>' + (d.negocio ? ' · ' + esc(d.negocio) : '') + '</div>' +
+          '</blockquote>'
+        );
+      }).join('');
+      document.getElementById('depoimentos').hidden = false;
+      if (deps.length < 2) return;
+
+      const itens = lista.querySelectorAll('.depoimento');
+      const contador = document.getElementById('dep-contador');
+      const dois = function (n) { return String(n).padStart(2, '0'); };
+      let atual = 0;
+      let timer = null;
+      let pausado = false;
+
+      function mostrar(i) {
+        itens[atual].classList.remove('ativo');
+        itens[atual].setAttribute('aria-hidden', 'true');
+        atual = (i + itens.length) % itens.length;
+        itens[atual].classList.add('ativo');
+        itens[atual].removeAttribute('aria-hidden');
+        contador.textContent = dois(atual + 1) + ' / ' + dois(itens.length);
+        agendar();
+      }
+
+      function agendar() {
+        clearTimeout(timer);
+        if (reduceMotion || pausado) return;
+        timer = setTimeout(function () { if (!document.hidden) mostrar(atual + 1); else agendar(); }, 7000);
+      }
+
+      document.getElementById('depoimentos-nav').hidden = false;
+      document.getElementById('dep-anterior').addEventListener('click', function () { mostrar(atual - 1); });
+      document.getElementById('dep-proximo').addEventListener('click', function () { mostrar(atual + 1); });
+
+      const secao = document.getElementById('depoimentos');
+      secao.addEventListener('mouseenter', function () { pausado = true; agendar(); });
+      secao.addEventListener('mouseleave', function () { pausado = false; agendar(); });
+
+      // arrastar pro lado no celular
+      let inicioX = null;
+      lista.addEventListener('touchstart', function (e) { inicioX = e.touches[0].clientX; }, { passive: true });
+      lista.addEventListener('touchend', function (e) {
+        if (inicioX === null) return;
+        const dx = e.changedTouches[0].clientX - inicioX;
+        inicioX = null;
+        if (Math.abs(dx) > 40) mostrar(atual + (dx < 0 ? 1 : -1));
+      });
+
+      mostrar(0);
+    })
+    .catch(function () {}); // sem depoimentos, o site segue normal
 }
 
 // ========================

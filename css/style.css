@@ -536,6 +536,153 @@ section h2 {
 }
 
 /* ========================
+   O QUE DIZEM (depoimentos: um por vez, troca sozinho)
+======================== */
+/* todos ficam empilhados no mesmo lugar: a altura é a do maior, então nada pula ao trocar */
+.depoimentos {
+    display: grid;
+}
+
+.depoimento {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s 0.7s;
+}
+
+.depoimento.ativo {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s;
+}
+
+.depoimento p {
+    font-size: clamp(1.35rem, 3.2vw, 2.1rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+    max-width: 32ch;
+    white-space: pre-line;
+}
+
+.dep-autor {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+}
+
+.dep-autor b {
+    font-weight: 400;
+    color: var(--muted);
+}
+
+/* contador e setas, discretos */
+.depoimentos-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+}
+
+.depoimentos-nav button {
+    font: inherit;
+    font-size: 1rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.depoimentos-nav button:hover {
+    color: var(--text);
+    border-color: var(--faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .depoimento,
+    .depoimento.ativo {
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ========================
+   PÁGINA DE DEPOIMENTO (/feedback)
+======================== */
+.pagina-feedback main {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: 72px;
+}
+
+.pagina-feedback #feedback {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 32px;
+    max-width: 760px;
+}
+
+.contador {
+    float: right;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.armadilha {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.check input {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    padding: 0;
+    accent-color: var(--text);
+}
+
+.feedback-ok .note {
+    margin: -24px 0 32px;
+}
+
+.feedback-ok .btn {
+    display: inline-block;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .pagina-feedback #feedback {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================
    BOTÃO FLUTUANTE DO WHATSAPP (só no celular)
 ======================== */
 .wa-float {

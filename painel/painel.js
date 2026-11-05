@@ -24,6 +24,7 @@ let versao = null;    // versão publicada que o painel carregou
 let aberto = null;    // trabalho aberto no editor (ou null = lista)
 let sujo = false;     // tem alteração não publicada?
 let enviando = 0;     // arquivos ainda subindo
+let deps = { aprovados: [], pendentes: [], versao: null }; // depoimentos (valem na hora, sem "Publicar")
 
 const conteudo = document.getElementById('conteudo');
 const voltar = document.getElementById('voltar');
@@ -118,6 +119,7 @@ async function carregar() {
     const dados = await api('trabalhos');
     works = dados.works;
     versao = dados.versao;
+    deps = await api('depoimentos').catch(function () { return deps; });
     mostrarLista();
   } catch (e) {
     conteudo.innerHTML = '<p class="carregando">' + esc(e.message) + '</p>';
@@ -186,7 +188,10 @@ function mostrarLista() {
         '</li>'
       );
     }).join('') +
-    '</ul>';
+    '</ul>' +
+    '<div id="depoimentos-painel"></div>';
+
+  desenharDepoimentos();
 
   document.getElementById('novo').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -227,6 +232,117 @@ function trocar(lista, i, j) {
 voltar.addEventListener('click', function () {
   mostrarLista();
   window.scrollTo(0, 0);
+});
+
+// ========================
+// DEPOIMENTOS
+// Chegam pela página /feedback e esperam aqui. Aprovar põe no site na hora.
+// ========================
+
+function desenharDepoimentos() {
+  const caixa = document.getElementById('depoimentos-painel');
+  if (!caixa) return;
+
+  function cartao(d, botoes) {
+    return (
+      '<li class="dep">' +
+      '<p class="dep-texto">' + esc(d.texto) + '</p>' +
+      '<p class="dep-autor"><b>' + esc(d.nome) + '</b>' +
+      esc([d.negocio, dataBonita(d.data)].filter(Boolean).map(function (x) { return ' · ' + x; }).join('')) + '</p>' +
+      '<div class="dep-acoes">' + botoes + '</div>' +
+      '</li>'
+    );
+  }
+
+  const n = deps.aprovados.length;
+  caixa.innerHTML =
+    '<h1 class="dep-titulo">Depoimentos</h1>' +
+    '<p class="dica">Mande este link pro cliente depois do trabalho. O que ele escrever aparece aqui primeiro, e só vai pro site se você aprovar.</p>' +
+    '<div class="dep-link"><code>bycoast.com.br/feedback</code><button class="btn" data-dep-copiar>Copiar link</button></div>' +
+
+    (deps.pendentes.length
+      ? '<h2 class="dep-sub">Esperando aprovação (' + deps.pendentes.length + ')</h2><ul class="deps">' +
+        deps.pendentes.map(function (d) {
+          return cartao(d,
+            '<button class="btn btn-principal" data-dep-aprovar="' + d.id + '">Aprovar</button>' +
+            '<button class="btn btn-perigo" data-dep-recusar="' + d.id + '">Recusar</button>');
+        }).join('') + '</ul>'
+      : '') +
+
+    '<h2 class="dep-sub">No site' + (n ? ' (' + n + ')' : '') + '</h2>' +
+    (n
+      ? '<p class="dica">A ordem aqui é a ordem no site.</p><ul class="deps">' +
+        deps.aprovados.map(function (d, i) {
+          return cartao(d,
+            '<button class="mini" data-dep-mover="' + i + '" data-dir="-1" aria-label="Subir"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+            '<button class="mini" data-dep-mover="' + i + '" data-dir="1" aria-label="Descer"' + (i === n - 1 ? ' disabled' : '') + '>↓</button>' +
+            '<button class="mini apagar" data-dep-tirar="' + i + '" aria-label="Tirar do site">✕</button>');
+        }).join('') + '</ul>'
+      : '<p class="vazio">Nenhum depoimento no site ainda.</p>');
+}
+
+// "2026-11-05" → "05/11/2026"
+function dataBonita(data) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data || '');
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : '';
+}
+
+async function acaoDepoimento(fazer, mensagem) {
+  try {
+    await fazer();
+    deps = await api('depoimentos');
+    if (mensagem) avisar(mensagem, 'ok');
+  } catch (e) {
+    avisar(e.message, 'erro');
+  }
+  if (!aberto) desenharDepoimentos();
+}
+
+function salvarAprovados(lista) {
+  return api('depoimentos', {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ lista: lista, versao: deps.versao })
+  });
+}
+
+conteudo.addEventListener('click', function (e) {
+  const alvo = e.target.closest('[data-dep-copiar], [data-dep-aprovar], [data-dep-recusar], [data-dep-mover], [data-dep-tirar]');
+  if (!alvo || aberto) return;
+  const d = alvo.dataset;
+
+  if ('depCopiar' in d) {
+    const link = 'https://bycoast.com.br/feedback';
+    if (navigator.share) navigator.share({ url: link }).catch(function () {});
+    else navigator.clipboard.writeText(link).then(function () { avisar('Link copiado.', 'ok'); });
+    return;
+  }
+
+  alvo.disabled = true;
+  const post = function (acao, id) {
+    return api('depoimentos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ acao: acao, id: id }) });
+  };
+
+  if (d.depAprovar) acaoDepoimento(function () { return post('aprovar', d.depAprovar); }, 'Aprovado! Já está no site.');
+
+  if (d.depRecusar) {
+    if (!confirm('Recusar este depoimento? Ele é apagado e não dá para desfazer.')) { alvo.disabled = false; return; }
+    acaoDepoimento(function () { return post('recusar', d.depRecusar); }, 'Depoimento recusado.');
+  }
+
+  if (d.depMover) {
+    const lista = deps.aprovados.slice();
+    const i = Number(d.depMover);
+    trocar(lista, i, i + Number(d.dir));
+    acaoDepoimento(function () { return salvarAprovados(lista); });
+  }
+
+  if (d.depTirar) {
+    if (!confirm('Tirar este depoimento do site? Ele é apagado e não dá para desfazer.')) { alvo.disabled = false; return; }
+    const lista = deps.aprovados.slice();
+    lista.splice(Number(d.depTirar), 1);
+    acaoDepoimento(function () { return salvarAprovados(lista); }, 'Tirado do site.');
+  }
 });
 
 // ========================
