@@ -48,7 +48,7 @@
     font-weight: 400;
     letter-spacing: -0.03em;
 }
-:root[data-fonte="5"] :is(section h2, label, .hero-meta) {
+:root[data-fonte="5"] :is(section h2, label:not(.check), .hero-meta) {
     letter-spacing: 0.16em;
 }
 
