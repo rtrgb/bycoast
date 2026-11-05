@@ -1070,6 +1070,15 @@ footer {
     opacity: 0.7;
 }
 
+.credito a {
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.credito a:hover {
+    color: var(--text);
+}
+
 .footer-links {
     display: flex;
     gap: 24px;
