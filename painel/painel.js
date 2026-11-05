@@ -248,7 +248,7 @@ function abrir(index) {
     }).join('') +
     '</select></div>' +
     '<div><label for="f-local">Cidade</label><input id="f-local" data-campo="local" value="' + esc(w.local) + '" placeholder="Balneário Camboriú" /></div>' +
-    '<div class="largo"><label for="f-cliente">Cliente (aparece em "Quem já atendeu")</label><input id="f-cliente" data-campo="cliente" value="' + esc(w.cliente) + '" placeholder="Opcional" /></div>' +
+    '<div class="largo"><label for="f-cliente">Cliente (aparece em "Clientes")</label><input id="f-cliente" data-campo="cliente" value="' + esc(w.cliente) + '" placeholder="Opcional" /></div>' +
     '</div>' +
 
     '<div class="secao"><h2>Fotos e vídeos</h2>' +
